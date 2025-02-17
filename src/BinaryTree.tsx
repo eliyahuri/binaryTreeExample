@@ -133,10 +133,8 @@ const BinaryTree: React.FC = () => {
 
   return (
     <div className="text-center mt-5 px-4">
-      <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4">
-        Binary Tree Visualizer
-      </h1>
-      <div className="flex flex-col sm:flex-row justify-center items-center gap-3 mt-3">
+      <h1 className="text-2xl font-bold">Binary Tree Visualizer</h1>
+      <div className="flex flex-col sm:flex-row justify-center items-center gap-2 mt-3">
         <input
           type="number"
           step="any"
@@ -144,21 +142,21 @@ const BinaryTree: React.FC = () => {
           onChange={(e) => setInputValue(e.target.value)}
           placeholder="Enter a number (max 5 digits)"
           maxLength={5}
-          className="border border-gray-300 rounded px-3 py-2 w-full sm:w-60"
+          className="border border-gray-300 rounded px-2 py-2 w-full sm:w-auto"
         />
         <button
           onClick={handleInsert}
-          className="px-5 py-2 bg-blue-600 text-white rounded w-full sm:w-auto hover:bg-blue-700 active:scale-95 transition-transform"
+          className="px-4 py-2 bg-blue-500 text-white rounded w-full sm:w-auto"
         >
           Insert
         </button>
       </div>
       <div className="overflow-x-auto mt-5">
         <svg
-          width="100%"
-          height="60vh"
+          width="1000"
+          height="600"
           viewBox={viewBox}
-          className="border border-black"
+          className="border border-black w-full"
         >
           {renderTree(tree)}
         </svg>
