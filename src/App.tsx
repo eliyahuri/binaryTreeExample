@@ -3,16 +3,20 @@ import { WhatIsBinaryTree } from "./WhatIs";
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4 sm:p-6 md:p-8">
-      <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-blue-600 mb-4 text-center">
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center px-4 sm:px-6 md:px-8 py-6">
+      <h1 className="text-xl sm:text-2xl md:text-4xl font-bold text-blue-600 mb-6 text-center leading-tight">
         WELCOME TO ELIYAHU'S BINARY TREE
       </h1>
-      <BinaryTree />
-      <p className="text-base sm:text-lg md:text-xl text-gray-700 mt-4 text-center">
+
+      <div className="w-full max-w-sm sm:max-w-md md:max-w-lg">
+        <BinaryTree />
+      </div>
+
+      <p className="text-sm sm:text-base md:text-lg text-gray-700 mt-5 text-center leading-relaxed">
         <WhatIsBinaryTree />
       </p>
 
-      <footer className="mt-8 text-gray-500 text-sm sm:text-base md:text-lg text-center">
+      <footer className="mt-10 text-gray-500 text-xs sm:text-sm md:text-base text-center">
         &copy; Eliyahu Huri 2025
       </footer>
     </div>

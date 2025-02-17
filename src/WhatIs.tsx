@@ -186,54 +186,56 @@ tree.insert(3)`,
   };
 
   return (
-    <div className="p-6 bg-gray-100 rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-4">What is a Binary Tree?</h2>
-      <p className="mb-2">
-        A binary tree is a hierarchical data structure where each node can have
-        at most two children, typically referred to as the left child and right
-        child. Each node contains a value and pointers to its children.
+    // Use responsive padding and max-width
+    <div className="w-full max-w-3xl mx-auto px-4 py-6 bg-gray-100 rounded-lg shadow-md">
+      <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-4 text-center">
+        What is a Binary Tree?
+      </h2>
+      <p className="mb-3 text-gray-700 text-sm sm:text-base">
+        A binary tree is a hierarchical data structure where each node has at
+        most two children: a left child and a right child. The tree starts from
+        a root node and extends downward through connected nodes.
       </p>
-      <p className="mb-2">
-        The topmost node is called the root, nodes with no children are called
-        leaves, and nodes with at least one child are called internal nodes. The
-        connection between nodes is called an edge.
+      <p className="mb-2 text-gray-700 text-sm sm:text-base">
+        Binary trees have many applications in computer science, including:
       </p>
-      <p className="mb-2">
-        Binary trees are fundamental in computer science and have numerous
-        applications:
-      </p>
-      <ul className="list-disc ml-6 mb-2">
-        <li>Binary Search Trees (BST) - For efficient searching and sorting</li>
-        <li>Expression Trees - For representing mathematical expressions</li>
-        <li>Huffman Coding Trees - For data compression</li>
-        <li>
-          Priority Queues and Heaps - For efficient priority-based operations
-        </li>
+      <ul className="list-disc ml-5 mb-3 text-gray-700 text-sm sm:text-base">
+        <li>Binary Search Trees (BSTs) for efficient searching and sorting</li>
+        <li>Expression Trees to represent mathematical expressions</li>
+        <li>Huffman Trees for data compression algorithms</li>
+        <li>Priority Queues and Heaps for scheduling and optimization</li>
       </ul>
-      <p className="mb-2">Common operations on binary trees include:</p>
-      <ul className="list-disc ml-6 mb-2">
-        <li>Insertion - Adding new nodes</li>
-        <li>Deletion - Removing existing nodes</li>
+      <p className="mb-2 text-gray-700 text-sm sm:text-base">
+        Key operations on binary trees include:
+      </p>
+      <ul className="list-disc ml-5 mb-4 text-gray-700 text-sm sm:text-base">
+        <li>Insertion: Adding nodes</li>
+        <li>Deletion: Removing nodes</li>
         <li>
-          Traversal - Visiting nodes in different orders (in-order, pre-order,
+          Traversal: Visiting nodes in different orders (in-order, pre-order,
           post-order)
         </li>
-        <li>Searching - Finding specific values</li>
-        <li>Balancing - Maintaining optimal tree structure</li>
+        <li>Searching: Finding specific values</li>
+        <li>Balancing: Maintaining optimal tree structure</li>
       </ul>
-      <p className="mb-4">
-        The efficiency of binary tree operations typically depends on the tree's
-        height. In a balanced binary tree, most operations have a time
-        complexity of O(log n), making them highly efficient for large datasets.
+      <p className="mb-6 text-gray-700 text-sm sm:text-base">
+        In balanced binary trees, operations like insertion, deletion, and
+        search can often be performed in O(log n) time, making them efficient
+        for large datasets.
       </p>
-      <h3 className="text-xl font-semibold mb-2">Examples:</h3>
+      <h3 className="text-base sm:text-lg md:text-xl font-semibold mb-3">
+        Code Examples:
+      </h3>
       <div className="mb-4">
-        <label htmlFor="language" className="block mb-2 font-semibold">
+        <label
+          htmlFor="language"
+          className="block mb-2 font-medium text-sm sm:text-base"
+        >
           Select Language:
         </label>
         <select
           id="language"
-          className="p-2 bg-white border rounded"
+          className="p-2 border border-gray-300 rounded w-full sm:w-64 text-sm"
           value={selectedLanguage}
           onChange={(e) =>
             setSelectedLanguage(
@@ -253,8 +255,8 @@ tree.insert(3)`,
           <option value="Python">Python</option>
         </select>
       </div>
-      <div className="mb-4">
-        <pre className="bg-gray-200 p-2 rounded">
+      <div className="mb-2 overflow-x-auto">
+        <pre className="bg-gray-900 text-green-300 p-4 rounded text-xs sm:text-sm md:text-base overflow-x-auto">
           <code>{examples[selectedLanguage]}</code>
         </pre>
       </div>
