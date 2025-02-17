@@ -85,7 +85,7 @@ const BinaryTree: React.FC = () => {
             key={node.value}
             cx={node.x}
             cy={node.y}
-            r="20"
+            r="30" // Increased radius from 20 to 30
             fill="lightblue"
             stroke="black"
             initial={{ scale: 0 }}
@@ -98,8 +98,8 @@ const BinaryTree: React.FC = () => {
           x={node.x}
           y={node.y}
           textAnchor="middle"
-          dy="5"
-          fontSize="14"
+          dy="16" // Adjusted dy to better center the text
+          fontSize="48" // Increased font size from 24 to 32
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
