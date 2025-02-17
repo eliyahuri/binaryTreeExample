@@ -132,31 +132,35 @@ const BinaryTree: React.FC = () => {
   }, [tree]);
 
   return (
-    <div className="text-center mt-5">
+    <div className="text-center mt-5 px-4">
       <h1 className="text-2xl font-bold">Binary Tree Visualizer</h1>
-      <input
-        type="number"
-        step="any"
-        value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
-        placeholder="Enter a number (max 5 digits)"
-        maxLength={5}
-        className="border border-gray-300 rounded px-2 py-1"
-      />
-      <button
-        onClick={handleInsert}
-        className="ml-2 px-4 py-1 bg-blue-500 text-white rounded"
-      >
-        Insert
-      </button>
-      <svg
-        width="1000"
-        height="600"
-        viewBox={viewBox}
-        className="border border-black mt-5"
-      >
-        {renderTree(tree)}
-      </svg>
+      <div className="flex flex-col sm:flex-row justify-center items-center gap-2 mt-3">
+        <input
+          type="number"
+          step="any"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          placeholder="Enter a number (max 5 digits)"
+          maxLength={5}
+          className="border border-gray-300 rounded px-2 py-2 w-full sm:w-auto"
+        />
+        <button
+          onClick={handleInsert}
+          className="px-4 py-2 bg-blue-500 text-white rounded w-full sm:w-auto"
+        >
+          Insert
+        </button>
+      </div>
+      <div className="overflow-x-auto mt-5">
+        <svg
+          width="1000"
+          height="600"
+          viewBox={viewBox}
+          className="border border-black w-full"
+        >
+          {renderTree(tree)}
+        </svg>
+      </div>
     </div>
   );
 };
