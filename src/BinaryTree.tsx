@@ -54,6 +54,8 @@ const BinaryTree: React.FC = () => {
       return null;
     }
 
+    const scaleFactor = Math.log10(node.value + 1) + 1; // Adjust the scale factor as needed
+
     return (
       <>
         {node.left && (
@@ -85,7 +87,7 @@ const BinaryTree: React.FC = () => {
             key={node.value}
             cx={node.x}
             cy={node.y}
-            r="30" // Increased radius from 20 to 30
+            r={20 * scaleFactor} // Scale the radius based on the node value
             fill="lightblue"
             stroke="black"
             initial={{ scale: 0 }}
@@ -98,8 +100,8 @@ const BinaryTree: React.FC = () => {
           x={node.x}
           y={node.y}
           textAnchor="middle"
-          dy="16" // Adjusted dy to better center the text
-          fontSize="48" // Increased font size from 24 to 32
+          dy="16"
+          fontSize={24 * scaleFactor} // Scale the font size based on the node value
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
