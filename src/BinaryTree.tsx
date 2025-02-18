@@ -24,11 +24,14 @@ const BinaryTree: React.FC = () => {
     if (root === null) {
       return { value, left: null, right: null, x, y };
     }
-    const shift = 300 / depth;
+    // Increase the horizontal shift between nodes
+    const shift = 400 / depth; // Changed from 300 to 400
     if (value < root.value) {
-      root.left = insertNode(root.left, value, x - shift, y + 70, depth + 1);
+      // Increase vertical spacing from 70 to 100
+      root.left = insertNode(root.left, value, x - shift, y + 100, depth + 1);
     } else {
-      root.right = insertNode(root.right, value, x + shift, y + 70, depth + 1);
+      // Increase vertical spacing from 70 to 100
+      root.right = insertNode(root.right, value, x + shift, y + 100, depth + 1);
     }
     return root;
   };
