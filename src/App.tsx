@@ -1,9 +1,10 @@
 import BinaryTree from "./BinaryTree";
 import { WhatIsBinaryTree } from "./WhatIs";
-
+import { Analytics } from "@vercel/analytics/react";
 function App() {
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center px-4 sm:px-6 md:px-8 py-6">
+      <Analytics />
       <h1 className="text-xl sm:text-2xl md:text-4xl font-bold text-blue-600 mb-6 text-center leading-tight">
         WELCOME TO ELIYAHU'S BINARY TREE
       </h1>
