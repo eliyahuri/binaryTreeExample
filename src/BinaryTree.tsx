@@ -77,6 +77,8 @@ const BinaryTree: React.FC = () => {
         setTree((prevTree) => insertNode(prevTree, value));
       }
       setInputValue("");
+    } else {
+      alert("Please enter a non-negative number with up to 5 digits.");
     }
   };
 
@@ -252,6 +254,11 @@ const BinaryTree: React.FC = () => {
           step="any"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleInsert();
+            }
+          }}
           placeholder="Enter a non-negative number (max 5 digits)"
           maxLength={5}
           className="border border-gray-300 rounded px-3 py-2 w-full sm:w-auto
