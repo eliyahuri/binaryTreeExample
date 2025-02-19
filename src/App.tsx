@@ -26,6 +26,11 @@ function App() {
 
       <footer className="mt-12 text-gray-500 text-sm text-center">
         &copy; {new Date().getFullYear()} Eliyahu Huri. All rights reserved.
+        <p className="mt-2">
+          <a href="https://github.com/eliyahuri/binaryTreeExample">
+            Please star me on GitHub!
+          </a>
+        </p>
       </footer>
     </div>
   );
