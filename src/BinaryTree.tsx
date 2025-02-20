@@ -241,9 +241,9 @@ const BinaryTree: React.FC = () => {
   }, [tree]);
 
   return (
-    <div className="flex flex-col items-center mt-5 px-4">
+    <div className="flex flex-col items-center mt-5 px-4 dark:bg-gray-900 dark:text-gray-200">
       <h1 className="text-3xl font-bold mb-1">Binary Tree Visualizer</h1>
-      <p className="text-gray-600 mb-4">
+      <p className="text-gray-600 dark:text-gray-400 mb-4">
         Insert non-negative numbers to build a Binary Search Tree.
       </p>
 
@@ -261,8 +261,8 @@ const BinaryTree: React.FC = () => {
           }}
           placeholder="Enter a non-negative number (max 5 digits)"
           maxLength={5}
-          className="border border-gray-300 rounded px-3 py-2 w-full sm:w-auto
-                     focus:outline-none focus:ring-2 focus:ring-blue-200"
+          className="border border-gray-300 dark:border-gray-700 rounded px-3 py-2 w-full sm:w-auto
+                     focus:outline-none focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-500"
         />
         <button
           onClick={handleInsert}
@@ -273,7 +273,7 @@ const BinaryTree: React.FC = () => {
         </button>
       </div>
 
-      <div className="overflow-x-auto w-full border border-gray-200 rounded-lg">
+      <div className="overflow-x-auto w-full border border-gray-200 dark:border-gray-700 rounded-lg">
         <svg width="100%" height="600" viewBox={viewBox} className="w-full">
           <defs>
             {/* Drop Shadow Filter */}
