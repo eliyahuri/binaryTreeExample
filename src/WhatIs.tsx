@@ -4,13 +4,20 @@ import { dracula } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import { examples } from "./codeExamples";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
+import type { Languages } from "./types/language";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 
 export function WhatIsBinaryTree() {
-  const [selectedLanguage, setSelectedLanguage] = useState<
-    "Java" | "CSharp" | "JavaScript" | "TypeScript" | "Python"
-  >("Java");
+  const [selectedLanguage, setSelectedLanguage] = useState<Languages>("Java");
+  const [copied, setCopied] = useState(false);
 
-  const languages = ["Java", "CSharp", "JavaScript", "TypeScript", "Python"];
+  const languages: Languages[] = [
+    "Java",
+    "CSharp",
+    "JavaScript",
+    "TypeScript",
+    "Python",
+  ];
 
   return (
     <div className="w-full max-w-3xl mx-auto px-4 py-6 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-md">
@@ -63,16 +70,7 @@ export function WhatIsBinaryTree() {
           id="language"
           className="p-2 border border-gray-300 dark:border-gray-700 rounded w-full sm:w-64 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
           value={selectedLanguage}
-          onChange={(e) =>
-            setSelectedLanguage(
-              e.target.value as
-                | "Java"
-                | "CSharp"
-                | "JavaScript"
-                | "TypeScript"
-                | "Python"
-            )
-          }
+          onChange={(e) => setSelectedLanguage(e.target.value as Languages)}
         >
           {languages.map((language) => (
             <option key={language} value={language}>
@@ -85,14 +83,7 @@ export function WhatIsBinaryTree() {
         <Carousel
           selectedItem={languages.indexOf(selectedLanguage)}
           onChange={(index) =>
-            setSelectedLanguage(
-              languages[index] as
-                | "Java"
-                | "CSharp"
-                | "JavaScript"
-                | "TypeScript"
-                | "Python"
-            )
+            setSelectedLanguage(languages[index] as Languages)
           }
           showThumbs={false}
           showStatus={false}
@@ -101,13 +92,23 @@ export function WhatIsBinaryTree() {
         >
           {languages.map((language) => (
             <div key={language}>
-              <SyntaxHighlighter
-                language={language.toLowerCase()}
-                style={dracula}
-                customStyle={{ fontSize: "0.75rem", textAlign: "left" }}
-              >
-                {examples[language as keyof typeof examples]}
-              </SyntaxHighlighter>
+              <div className="relative">
+                <SyntaxHighlighter
+                  language={language.toLowerCase()}
+                  style={dracula}
+                  customStyle={{ fontSize: "0.75rem", textAlign: "left" }}
+                >
+                  {examples[language]}
+                </SyntaxHighlighter>
+                <CopyToClipboard
+                  text={examples[language]}
+                  onCopy={() => setCopied(true)}
+                >
+                  <button className="absolute top-2 right-2 p-1 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded">
+                    {copied ? "Copied!" : "Copy"}
+                  </button>
+                </CopyToClipboard>
+              </div>
             </div>
           ))}
         </Carousel>

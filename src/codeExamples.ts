@@ -1,7 +1,7 @@
+import type { Languages } from "./types/language";
+
 // filepath: /c:/Users/אליהו/OneDrive/שולחן העבודה/coding/binaryTreeExample/src/codeExamples.ts
-export const examples: {
-  [key in "Java" | "CSharp" | "JavaScript" | "TypeScript" | "Python"]: string;
-} = {
+export const examples: Record<Languages, string> = {
   Java: `class Node {
     int value;
     Node left, right;
