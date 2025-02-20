@@ -19,6 +19,11 @@ export function WhatIsBinaryTree() {
     "Python",
   ];
 
+  const handleCarouselChange = (index: number) => {
+    setSelectedLanguage(languages[index] as Languages);
+    setCopied(false); // Reset the copied state
+  };
+
   return (
     <div className="w-full max-w-3xl mx-auto px-4 py-6 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-md">
       <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-4 text-center text-gray-900 dark:text-gray-100">
@@ -82,9 +87,7 @@ export function WhatIsBinaryTree() {
       <div className="mb-2 overflow-x-auto">
         <Carousel
           selectedItem={languages.indexOf(selectedLanguage)}
-          onChange={(index) =>
-            setSelectedLanguage(languages[index] as Languages)
-          }
+          onChange={handleCarouselChange}
           showThumbs={false}
           showStatus={false}
           infiniteLoop
