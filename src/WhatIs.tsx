@@ -2,11 +2,15 @@ import { useState } from "react";
 import { Light as SyntaxHighlighter } from "react-syntax-highlighter";
 import { dracula } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import { examples } from "./codeExamples";
+import { Carousel } from "react-responsive-carousel";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
 
 export function WhatIsBinaryTree() {
   const [selectedLanguage, setSelectedLanguage] = useState<
     "Java" | "CSharp" | "JavaScript" | "TypeScript" | "Python"
   >("Java");
+
+  const languages = ["Java", "CSharp", "JavaScript", "TypeScript", "Python"];
 
   return (
     <div className="w-full max-w-3xl mx-auto px-4 py-6 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-md">
@@ -70,21 +74,43 @@ export function WhatIsBinaryTree() {
             )
           }
         >
-          <option value="Java">Java</option>
-          <option value="CSharp">C#</option>
-          <option value="JavaScript">JavaScript</option>
-          <option value="TypeScript">TypeScript</option>
-          <option value="Python">Python</option>
+          {languages.map((language) => (
+            <option key={language} value={language}>
+              {language}
+            </option>
+          ))}
         </select>
       </div>
       <div className="mb-2 overflow-x-auto">
-        <SyntaxHighlighter
-          language={selectedLanguage.toLowerCase()}
-          style={dracula}
-          customStyle={{ fontSize: "0.75rem", textAlign: "left" }}
+        <Carousel
+          selectedItem={languages.indexOf(selectedLanguage)}
+          onChange={(index) =>
+            setSelectedLanguage(
+              languages[index] as
+                | "Java"
+                | "CSharp"
+                | "JavaScript"
+                | "TypeScript"
+                | "Python"
+            )
+          }
+          showThumbs={false}
+          showStatus={false}
+          infiniteLoop
+          useKeyboardArrows
         >
-          {examples[selectedLanguage]}
-        </SyntaxHighlighter>
+          {languages.map((language) => (
+            <div key={language}>
+              <SyntaxHighlighter
+                language={language.toLowerCase()}
+                style={dracula}
+                customStyle={{ fontSize: "0.75rem", textAlign: "left" }}
+              >
+                {examples[language as keyof typeof examples]}
+              </SyntaxHighlighter>
+            </div>
+          ))}
+        </Carousel>
       </div>
     </div>
   );

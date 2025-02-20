@@ -27,7 +27,7 @@ A binary tree is a hierarchical data structure in which each node has at most tw
 Here is a simple example of a binary tree:
 
 ```
-  1
+    1
    / \
   2   3
  / \
