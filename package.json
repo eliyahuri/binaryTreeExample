@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tailwindcss/vite": "^4.0.7",
+    "@tailwindcss/vite": "^4.0.8",
     "@types/react-copy-to-clipboard": "^5.0.7",
     "@vercel/analytics": "^1.5.0",
     "framer-motion": "^12.4.7",
@@ -20,15 +20,15 @@
     "react-intersection-observer": "^9.15.1",
     "react-responsive-carousel": "^3.2.23",
     "react-syntax-highlighter": "^15.6.1",
-    "tailwindcss": "^4.0.7"
+    "tailwindcss": "^4.0.8"
   },
   "devDependencies": {
-    "@eslint/js": "^9.20.0",
+    "@eslint/js": "^9.21.0",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "@types/react-syntax-highlighter": "^15.5.13",
     "@vitejs/plugin-react-swc": "^3.8.0",
-    "eslint": "^9.20.1",
+    "eslint": "^9.21.0",
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^15.15.0",
