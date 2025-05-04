@@ -255,7 +255,7 @@ function bstDelete(root: TreeNode | null, value: number): TreeNode | null {
  *  React visualiser component
  *------------------------------------------------------------------*/
 const NODE_R = 18;
-const FONT = 14;
+const FONT = 22; // Increased font size for node values
 
 export default function BinaryTree() {
   const [kind, setKind] = useState<TreeKind>("BST");
@@ -368,7 +368,7 @@ export default function BinaryTree() {
         />
         <text
           x={n.x}
-          y={n.y + 4}
+          y={n.y + 6} // Adjusted for larger font
           textAnchor="middle"
           fontSize={FONT}
           fill="#111"
@@ -384,16 +384,18 @@ export default function BinaryTree() {
 
   /* -------------------------------------------------------------- */
   return (
-    <div className="flex flex-col items-center p-4 dark:bg-gray-900 dark:text-gray-200 min-h-screen">
-      <h1 className="text-3xl font-bold mb-4">Tree Visualiser</h1>
-      <div className="flex flex-wrap gap-2 mb-4 items-center">
+    <div className="flex flex-col items-center p-2 sm:p-4 dark:bg-gray-900 dark:text-gray-200 min-h-screen">
+      <h1 className="text-3xl sm:text-4xl font-bold mb-3 sm:mb-4 text-center">
+        Tree Visualiser
+      </h1>
+      <div className="flex flex-wrap gap-2 mb-3 sm:mb-4 items-center w-full justify-center">
         <select
           value={kind}
           onChange={(e) => {
             setKind(e.target.value as TreeKind);
             setRoot(null); // clear when switching kind
           }}
-          className="border px-2 py-1 rounded dark:bg-gray-800"
+          className="border px-2 py-1 rounded dark:bg-gray-800 text-base sm:text-lg"
         >
           <option value="BST">Binary Search Tree</option>
           <option value="AVL">AVL Tree</option>
@@ -401,30 +403,41 @@ export default function BinaryTree() {
         </select>
         <input
           type="number"
-          className="border rounded px-3 py-1 w-28"
+          className="border rounded px-3 py-2 w-28 sm:w-32 text-base sm:text-lg"
           placeholder="value"
           value={input}
           onChange={(e) => setInput(e.target.value)}
         />
         <button
           onClick={insert}
-          className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded"
+          className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded text-base sm:text-lg"
         >
           Insert
         </button>
         <button
           onClick={remove}
-          className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
+          className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded text-base sm:text-lg"
         >
           Delete
         </button>
       </div>
 
-      <div className="w-full overflow-x-auto border rounded shadow-inner bg-white dark:bg-gray-800">
-        <svg width="100%" height="500" viewBox={viewBox}>
-          {renderEdges(root)}
-          <AnimatePresence>{renderNodes(root)}</AnimatePresence>
-        </svg>
+      <div
+        className="w-full min-w-0 overflow-x-auto border rounded shadow-inner bg-white dark:bg-gray-800"
+        style={{ WebkitOverflowScrolling: "touch" }}
+      >
+        <div className="min-w-[400px] sm:min-w-[600px] md:min-w-[800px]">
+          <svg
+            width="100%"
+            height="300"
+            className="sm:h-[400px] md:h-[500px]"
+            viewBox={viewBox}
+            style={{ display: "block" }}
+          >
+            {renderEdges(root)}
+            <AnimatePresence>{renderNodes(root)}</AnimatePresence>
+          </svg>
+        </div>
       </div>
     </div>
   );
