@@ -1,309 +1,431 @@
-import React, { useState, useEffect, type JSX } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect, type JSX } from "react";
+import { AnimatePresence } from "framer-motion";
 
-type TreeNode = {
+/* ------------------------------------------------------------------
+ *  Data‑structures and helpers
+ * ----------------------------------------------------------------*/
+
+export type TreeKind = "BST" | "AVL" | "RBT";
+
+export enum Color {
+  RED = "red",
+  BLACK = "black",
+}
+
+interface TreeNode {
   value: number;
   left: TreeNode | null;
   right: TreeNode | null;
-  x: number;
-  y: number;
-};
+  parent: TreeNode | null; // needed for RBT fix‑ups
+  color: Color; // always BLACK for BST / AVL, red‑black logic for RBT
+  x: number; // layout – calculated after every mutation
+  y: number; // layout – calculated after every mutation
+}
 
-const BinaryTree: React.FC = () => {
-  const [tree, setTree] = useState<TreeNode | null>(null);
-  const [inputValue, setInputValue] = useState("");
-  const [viewBox, setViewBox] = useState("0 0 1000 600");
+/*-------------------------------------------------------------------
+ *  Layout – in‑order numbering gives tidy, non‑overlapping positions
+ *------------------------------------------------------------------*/
+const H_GAP = 70; // horizontal gap between consecutive in‑order nodes
+const V_GAP = 90; // vertical gap between levels
 
-  // Fixed sizes for nodes and text.
-  const NODE_RADIUS = 20;
-  const FONT_SIZE = 16;
+function layoutTree(root: TreeNode | null) {
+  let index = 0;
+  const dfs = (node: TreeNode | null, depth: number) => {
+    if (!node) return;
+    dfs(node.left, depth + 1);
+    node.x = index * H_GAP;
+    node.y = depth * V_GAP;
+    index += 1;
+    dfs(node.right, depth + 1);
+  };
+  dfs(root, 0);
+}
 
-  /**
-   * Check if a node already exists in the tree.
-   */
-  const nodeExists = (node: TreeNode | null, value: number): boolean => {
-    if (!node) return false;
-    if (node.value === value) return true;
-    return nodeExists(node.left, value) || nodeExists(node.right, value);
+/*-------------------------------------------------------------------
+ *  Utility tiny helpers
+ *------------------------------------------------------------------*/
+const isRed = (n: TreeNode | null) => n !== null && n.color === Color.RED;
+const height = (n: TreeNode | null): number =>
+  n ? 1 + Math.max(height(n.left), height(n.right)) : 0;
+const balanceFactor = (n: TreeNode | null) =>
+  n ? height(n.left) - height(n.right) : 0;
+
+/*-------------------------------------------------------------------
+ *  Rotations (shared by AVL and RBT)
+ *------------------------------------------------------------------*/
+/*-------------------------------------------------------------------
+ *  Rotations (shared by AVL and RBT) – **FIXED**
+ *------------------------------------------------------------------*/
+function rotateLeft(x: TreeNode): TreeNode {
+  const y = x.right!; // y becomes new subtree root
+  x.right = y.left;
+  if (y.left) y.left.parent = x;
+
+  // stitch y into x’s former parent
+  y.parent = x.parent;
+  if (x.parent) {
+    if (x === x.parent.left) x.parent.left = y;
+    else x.parent.right = y;
+  }
+
+  // finish rotation
+  y.left = x;
+  x.parent = y;
+  return y;
+}
+
+function rotateRight(y: TreeNode): TreeNode {
+  const x = y.left!; // x becomes new subtree root
+  y.left = x.right;
+  if (x.right) x.right.parent = y;
+
+  // stitch x into y’s former parent
+  x.parent = y.parent;
+  if (y.parent) {
+    if (y === y.parent.left) y.parent.left = x;
+    else y.parent.right = x;
+  }
+
+  // finish rotation
+  x.right = y;
+  y.parent = x;
+  return x;
+}
+
+/*-------------------------------------------------------------------
+ *  BST insertion (used raw or inside AVL/RBT wrappers)
+ *------------------------------------------------------------------*/
+function bstInsert(root: TreeNode | null, value: number): TreeNode {
+  if (!root)
+    return {
+      value,
+      left: null,
+      right: null,
+      parent: null,
+      color: Color.BLACK,
+      x: 0,
+      y: 0,
+    };
+  if (value < root.value) {
+    const inserted = bstInsert(root.left, value);
+    root.left = inserted;
+    inserted.parent = root;
+  } else if (value > root.value) {
+    const inserted = bstInsert(root.right, value);
+    root.right = inserted;
+    inserted.parent = root;
+  }
+  return root;
+}
+
+/*-------------------------------------------------------------------
+ *  AVL insertion – classical 4‑case re‑balancing
+ *------------------------------------------------------------------*/
+function avlInsert(root: TreeNode | null, value: number): TreeNode {
+  root = bstInsert(root, value);
+
+  const rebalance = (node: TreeNode | null): TreeNode | null => {
+    if (!node) return node;
+    node.left = rebalance(node.left);
+    node.right = rebalance(node.right);
+
+    const bf = balanceFactor(node);
+
+    if (bf > 1 && balanceFactor(node.left) >= 0) return rotateRight(node);
+    if (bf < -1 && balanceFactor(node.right) <= 0) return rotateLeft(node);
+    if (bf > 1 && balanceFactor(node.left) < 0) {
+      node.left = rotateLeft(node.left!);
+      return rotateRight(node);
+    }
+    if (bf < -1 && balanceFactor(node.right) > 0) {
+      node.right = rotateRight(node.right!);
+      return rotateLeft(node);
+    }
+    return node;
   };
 
-  /**
-   * Insert node into the BST.
-   * Adjust the shift to keep the tree from getting too wide.
-   */
-  const insertNode = (
-    root: TreeNode | null,
-    value: number,
-    x = 500,
-    y = 50,
-    depth = 1
-  ): TreeNode => {
-    if (!root) {
-      return { value, left: null, right: null, x, y };
-    }
+  return rebalance(root)!;
+}
 
-    // Try reducing this to 200 or 150 if you want a narrower tree.
-    const shift = 200 / depth;
-    const verticalGap = 80;
-
-    if (value < root.value) {
-      root.left = insertNode(
-        root.left,
+/*-------------------------------------------------------------------
+ *  Red‑Black insertion (CLRS – iterative bottom‑up fix‑up)
+ *------------------------------------------------------------------*/
+function rbtInsert(root: TreeNode | null, value: number): TreeNode {
+  // 1. normal BST insert, colouring new node RED
+  let inserted: TreeNode | null = null;
+  const bstInsertRed = (node: TreeNode | null, value: number): TreeNode => {
+    if (!node) {
+      inserted = {
         value,
-        x - shift,
-        y + verticalGap,
-        depth + 1
-      );
-    } else {
-      root.right = insertNode(
-        root.right,
-        value,
-        x + shift,
-        y + verticalGap,
-        depth + 1
-      );
+        left: null,
+        right: null,
+        parent: null,
+        color: Color.RED,
+        x: 0,
+        y: 0,
+      };
+      return inserted;
     }
-    return root;
+    if (value < node.value) {
+      const kid = bstInsertRed(node.left, value);
+      node.left = kid;
+      kid.parent = node;
+    } else if (value > node.value) {
+      const kid = bstInsertRed(node.right, value);
+      node.right = kid;
+      kid.parent = node;
+    }
+    return node;
   };
+  root = bstInsertRed(root, value);
 
-  /**
-   * Handle the insert action.
-   * Only allow non-negative numbers (>= 0) and numbers with up to 5 digits.
-   */
-  const handleInsert = () => {
-    const value = parseFloat(inputValue);
-    if (!isNaN(value) && value <= 99999 && value >= 0) {
-      if (!nodeExists(tree, value)) {
-        setTree((prevTree) => insertNode(prevTree, value));
+  // 2. Fix‑up the colours / structure
+  let z = inserted!;
+  while (z.parent && z.parent.color === Color.RED) {
+    const gp = z.parent.parent!;
+    if (z.parent === gp.left) {
+      const y = gp.right; // uncle
+      if (isRed(y)) {
+        // Case 1
+        z.parent.color = Color.BLACK;
+        if (y) y.color = Color.BLACK;
+        gp.color = Color.RED;
+        z = gp;
+      } else {
+        if (z === z.parent.right) {
+          // Case 2
+          z = z.parent;
+          const newSub = rotateLeft(z);
+          if (newSub.parent === null) root = newSub;
+        }
+        // Case 3
+        z.parent!.color = Color.BLACK;
+        gp.color = Color.RED;
+        const newSub = rotateRight(gp);
+        if (newSub.parent === null) root = newSub;
       }
-      setInputValue("");
     } else {
-      alert("Please enter a non-negative number with up to 5 digits.");
+      // mirror image
+      const y = gp.left;
+      if (isRed(y)) {
+        z.parent.color = Color.BLACK;
+        if (y) y.color = Color.BLACK;
+        gp.color = Color.RED;
+        z = gp;
+      } else {
+        if (z === z.parent.left) {
+          z = z.parent;
+          const newSub = rotateRight(z);
+          if (newSub.parent === null) root = newSub;
+        }
+        z.parent!.color = Color.BLACK;
+        gp.color = Color.RED;
+        const newSub = rotateLeft(gp);
+        if (newSub.parent === null) root = newSub;
+      }
     }
-  };
+  }
+  root.color = Color.BLACK; // root is always BLACK
+  return root;
+}
 
-  /**
-   * Given a number, return an array of strings.
-   * If the number’s string is more than 3 characters long,
-   * split it into two lines.
-   */
-  const wrapNumber = (num: number): string[] => {
-    const str = num.toString();
-    if (str.length <= 3) return [str];
-    const mid = Math.ceil(str.length / 2);
-    return [str.slice(0, mid), str.slice(mid)];
-  };
+/*-------------------------------------------------------------------
+ *  Deletion – simple BST delete for all kinds (AVL/RBT re‑balancing is
+ *  a sizeable addition, so left as exercise – structures remain valid
+ *  but not perfectly balanced after deletes).
+ *------------------------------------------------------------------*/
+function bstDelete(root: TreeNode | null, value: number): TreeNode | null {
+  if (!root) return null;
 
-  /**
-   * Recursively render the tree.
-   */
-  const renderTree = (node: TreeNode | null): JSX.Element | null => {
-    if (!node) return null;
-    const lines = wrapNumber(node.value);
+  if (value < root.value) root.left = bstDelete(root.left, value);
+  else if (value > root.value) root.right = bstDelete(root.right, value);
+  else {
+    if (!root.left) return root.right;
+    if (!root.right) return root.left;
 
-    return (
-      <>
-        {node.left && (
-          <motion.line
-            x1={node.x}
-            y1={node.y}
-            x2={node.left.x}
-            y2={node.left.y}
-            stroke="#666"
-            strokeWidth={2}
-            strokeDasharray="4 4"
-            initial={{ pathLength: 0, opacity: 0 }}
-            animate={{ pathLength: 1, opacity: 1 }}
-            transition={{ duration: 0.5 }}
-          />
-        )}
-        {node.right && (
-          <motion.line
-            x1={node.x}
-            y1={node.y}
-            x2={node.right.x}
-            y2={node.right.y}
-            stroke="#666"
-            strokeWidth={2}
-            strokeDasharray="4 4"
-            initial={{ pathLength: 0, opacity: 0 }}
-            animate={{ pathLength: 1, opacity: 1 }}
-            transition={{ duration: 0.5 }}
-          />
-        )}
-        <AnimatePresence>
-          <motion.circle
-            key={node.value}
-            cx={node.x}
-            cy={node.y}
-            r={NODE_RADIUS}
-            fill="url(#circleGradient)"
-            stroke="black"
-            strokeWidth={2}
-            filter="url(#dropShadow)"
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            exit={{ scale: 0 }}
-            transition={{ duration: 0.5 }}
-          />
-        </AnimatePresence>
-        <motion.text
-          x={node.x}
-          y={node.y}
-          textAnchor="middle"
-          fill="#333"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-        >
-          {lines.map((line, index) => (
-            <tspan
-              key={index}
-              x={node.x}
-              // If there is more than one line, adjust the dy to vertically center the text.
-              dy={
-                index === 0
-                  ? lines.length === 1
-                    ? "0.35em"
-                    : "-0.2em"
-                  : "1.2em"
-              }
-              fontSize={FONT_SIZE}
-            >
-              {line}
-            </tspan>
-          ))}
-        </motion.text>
-        {renderTree(node.left)}
-        {renderTree(node.right)}
-      </>
-    );
-  };
+    let succ = root.right;
+    while (succ.left) succ = succ.left;
+    root.value = succ.value;
+    root.right = bstDelete(root.right, succ.value);
+  }
+  return root;
+}
 
-  /**
-   * Compute bounding box of the entire tree:
-   * min/max X/Y among all nodes, then adapt viewBox to fit them.
-   */
-  const getBoundingBox = (
-    node: TreeNode | null,
-    bounds = {
-      minX: Infinity,
-      maxX: -Infinity,
-      minY: Infinity,
-      maxY: -Infinity,
-    }
-  ) => {
-    if (!node) return bounds;
+/*-------------------------------------------------------------------
+ *  React visualiser component
+ *------------------------------------------------------------------*/
+const NODE_R = 18;
+const FONT = 14;
 
-    bounds.minX = Math.min(bounds.minX, node.x);
-    bounds.maxX = Math.max(bounds.maxX, node.x);
-    bounds.minY = Math.min(bounds.minY, node.y);
-    bounds.maxY = Math.max(bounds.maxY, node.y);
+export default function BinaryTree() {
+  const [kind, setKind] = useState<TreeKind>("BST");
+  const [root, setRoot] = useState<TreeNode | null>(null);
+  const [input, setInput] = useState("");
+  const [viewBox, setViewBox] = useState("0 0 800 500");
 
-    getBoundingBox(node.left, bounds);
-    getBoundingBox(node.right, bounds);
-    return bounds;
-  };
-
-  /**
-   * Update viewBox whenever the tree changes.
-   */
+  // keep SVG centred & sized after every structural change
   useEffect(() => {
-    if (!tree) {
-      setViewBox("0 0 1000 600");
-      return;
-    }
+    layoutTree(root);
+    if (!root) return;
 
-    // 1) Calculate bounding box
-    const { minX, maxX, minY, maxY } = getBoundingBox(tree);
+    let minX = Infinity,
+      maxX = -Infinity,
+      minY = Infinity,
+      maxY = -Infinity;
+    const visit = (n: TreeNode | null) => {
+      if (!n) return;
+      minX = Math.min(minX, n.x);
+      maxX = Math.max(maxX, n.x);
+      minY = Math.min(minY, n.y);
+      maxY = Math.max(maxY, n.y);
+      visit(n.left);
+      visit(n.right);
+    };
+    visit(root);
+    const w = maxX - minX + 2 * H_GAP;
+    const h = maxY - minY + 2 * V_GAP;
+    setViewBox(
+      `${minX - H_GAP} ${minY - V_GAP} ${Math.max(800, w)} ${Math.max(500, h)}`
+    );
+  }, [root]);
 
-    // 2) Add some margin around the extreme nodes
-    const margin = 50;
-    const width = maxX - minX + margin * 2;
-    const height = maxY - minY + margin * 2;
+  const exists = (n: TreeNode | null, v: number): boolean => {
+    if (!n) return false;
+    if (n.value === v) return true;
+    return exists(n.left, v) || exists(n.right, v);
+  };
 
-    // 3) Enforce a minimum width and height
-    const minWidth = 1000;
-    const minHeight = 600;
-    const finalWidth = Math.max(minWidth, width);
-    const finalHeight = Math.max(minHeight, height);
+  const insert = () => {
+    const val = Number(input);
+    if (isNaN(val)) return;
+    if (exists(root, val)) return setInput("");
 
-    // 4) Center the bounding box if it’s smaller than the minimum dimensions
-    let offsetX = minX - margin;
-    let offsetY = minY - margin;
-    const extraSpaceX = finalWidth - width;
-    offsetX -= extraSpaceX / 2;
-    const extraSpaceY = finalHeight - height;
-    offsetY -= extraSpaceY / 2;
+    let updated: TreeNode;
+    if (kind === "AVL") updated = avlInsert(root, val);
+    else if (kind === "RBT") updated = rbtInsert(root, val);
+    else updated = bstInsert(root, val);
+    layoutTree(updated);
+    setRoot({ ...updated });
+    setInput("");
+  };
 
-    // 5) Set the viewBox
-    setViewBox(`${offsetX} ${offsetY} ${finalWidth} ${finalHeight}`);
-  }, [tree]);
+  const remove = () => {
+    const val = Number(input);
+    if (isNaN(val)) return;
+    const updated = bstDelete(root, val);
+    layoutTree(updated);
+    setRoot(updated ? { ...updated } : null);
+    setInput("");
+  };
 
+  /* -------------------------------------------------------------- */
+  const renderEdges = (n: TreeNode | null): JSX.Element[] => {
+    if (!n) return [];
+    const edges: JSX.Element[] = [];
+    if (n.left)
+      edges.push(
+        <line
+          key={`${n.value}-L`}
+          x1={n.x}
+          y1={n.y}
+          x2={n.left.x}
+          y2={n.left.y}
+          stroke="#666"
+          strokeWidth={2}
+          strokeDasharray="4 4"
+        />,
+        ...renderEdges(n.left)
+      );
+    if (n.right)
+      edges.push(
+        <line
+          key={`${n.value}-R`}
+          x1={n.x}
+          y1={n.y}
+          x2={n.right.x}
+          y2={n.right.y}
+          stroke="#666"
+          strokeWidth={2}
+          strokeDasharray="4 4"
+        />,
+        ...renderEdges(n.right)
+      );
+    return edges;
+  };
+
+  const renderNodes = (n: TreeNode | null): JSX.Element[] => {
+    if (!n) return [];
+    const items: JSX.Element[] = [];
+    items.push(
+      <g key={n.value}>
+        <circle
+          cx={n.x}
+          cy={n.y}
+          r={NODE_R}
+          fill={n.color === Color.RED ? "#fecaca" : "#bfdbfe"}
+          stroke="#000"
+          strokeWidth={2}
+        />
+        <text
+          x={n.x}
+          y={n.y + 4}
+          textAnchor="middle"
+          fontSize={FONT}
+          fill="#111"
+        >
+          {n.value}
+        </text>
+      </g>
+    );
+    items.push(...renderNodes(n.left));
+    items.push(...renderNodes(n.right));
+    return items;
+  };
+
+  /* -------------------------------------------------------------- */
   return (
-    <div className="flex flex-col items-center mt-5 px-4 dark:bg-gray-900 dark:text-gray-200">
-      <h1 className="text-3xl font-bold mb-1">Binary Tree Visualizer</h1>
-      <p className="text-gray-600 dark:text-gray-400 mb-4">
-        Insert non-negative numbers to build a Binary Search Tree.
-      </p>
-
-      <div className="flex flex-col sm:flex-row justify-center items-center gap-2 mb-4">
+    <div className="flex flex-col items-center p-4 dark:bg-gray-900 dark:text-gray-200 min-h-screen">
+      <h1 className="text-3xl font-bold mb-4">Tree Visualiser</h1>
+      <div className="flex flex-wrap gap-2 mb-4 items-center">
+        <select
+          value={kind}
+          onChange={(e) => {
+            setKind(e.target.value as TreeKind);
+            setRoot(null); // clear when switching kind
+          }}
+          className="border px-2 py-1 rounded dark:bg-gray-800"
+        >
+          <option value="BST">Binary Search Tree</option>
+          <option value="AVL">AVL Tree</option>
+          <option value="RBT">Red‑Black Tree</option>
+        </select>
         <input
           type="number"
-          min="0"
-          step="any"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              handleInsert();
-            }
-          }}
-          placeholder="Enter a non-negative number (max 5 digits)"
-          maxLength={5}
-          className="border border-gray-300 dark:border-gray-700 rounded px-3 py-2 w-full sm:w-auto
-                     focus:outline-none focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-500"
+          className="border rounded px-3 py-1 w-28"
+          placeholder="value"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
         />
         <button
-          onClick={handleInsert}
-          className="px-5 py-2 bg-blue-500 text-white rounded hover:bg-blue-600
-                     transition-colors w-full sm:w-auto"
+          onClick={insert}
+          className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded"
         >
           Insert
         </button>
+        <button
+          onClick={remove}
+          className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
+        >
+          Delete
+        </button>
       </div>
 
-      <div className="overflow-x-auto w-full border border-gray-200 dark:border-gray-700 rounded-lg">
-        <svg width="100%" height="600" viewBox={viewBox} className="w-full">
-          <defs>
-            {/* Drop Shadow Filter */}
-            <filter
-              id="dropShadow"
-              x="-50%"
-              y="-50%"
-              width="200%"
-              height="200%"
-            >
-              <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="blur" />
-              <feOffset in="blur" dx="2" dy="2" result="offsetBlur" />
-              <feMerge>
-                <feMergeNode in="offsetBlur" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
-
-            {/* Gradient for circles */}
-            <linearGradient id="circleGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#dbeafe" />
-              <stop offset="100%" stopColor="#bfdbfe" />
-            </linearGradient>
-          </defs>
-
-          {renderTree(tree)}
+      <div className="w-full overflow-x-auto border rounded shadow-inner bg-white dark:bg-gray-800">
+        <svg width="100%" height="500" viewBox={viewBox}>
+          {renderEdges(root)}
+          <AnimatePresence>{renderNodes(root)}</AnimatePresence>
         </svg>
       </div>
     </div>
   );
-};
-
-export default BinaryTree;
+}

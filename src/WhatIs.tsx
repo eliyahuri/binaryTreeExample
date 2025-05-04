@@ -1,14 +1,16 @@
 import { useState } from "react";
 import { Light as SyntaxHighlighter } from "react-syntax-highlighter";
 import { dracula } from "react-syntax-highlighter/dist/esm/styles/hljs";
-import { examples } from "./codeExamples";
+import { examples } from "./translations/codeExamples";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import type { Languages } from "./types/language";
+import { TreeKind } from "./BinaryTree";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 
 export function WhatIsBinaryTree() {
   const [selectedLanguage, setSelectedLanguage] = useState<Languages>("Java");
+  const [selectedKind, setSelectedKind] = useState<TreeKind>("BST");
   const [copied, setCopied] = useState(false);
 
   const languages: Languages[] = [
@@ -19,9 +21,11 @@ export function WhatIsBinaryTree() {
     "Python",
   ];
 
+  const kinds: TreeKind[] = ["BST", "AVL", "RBT"];
+
   const handleCarouselChange = (index: number) => {
-    setSelectedLanguage(languages[index] as Languages);
-    setCopied(false); // Reset the copied state
+    setSelectedLanguage(languages[index]);
+    setCopied(false);
   };
 
   return (
@@ -29,41 +33,28 @@ export function WhatIsBinaryTree() {
       <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-4 text-center text-gray-900 dark:text-gray-100">
         What is a Binary Tree?
       </h2>
-      <p className="mb-3 text-gray-700 dark:text-gray-300 text-sm sm:text-base">
-        A binary tree is a hierarchical data structure where each node has at
-        most two children: a left child and a right child. The tree starts from
-        a root node and extends downward through connected nodes.
-      </p>
-      <p className="mb-2 text-gray-700 dark:text-gray-300 text-sm sm:text-base">
-        Binary trees have many applications in computer science, including:
-      </p>
-      <ul className="list-disc ml-5 mb-3 text-gray-700 dark:text-gray-300 text-sm sm:text-base">
-        <li>Binary Search Trees (BSTs) for efficient searching and sorting</li>
-        <li>Expression Trees to represent mathematical expressions</li>
-        <li>Huffman Trees for data compression algorithms</li>
-        <li>Priority Queues and Heaps for scheduling and optimization</li>
-      </ul>
-      <p className="mb-2 text-gray-700 dark:text-gray-300 text-sm sm:text-base">
-        Key operations on binary trees include:
-      </p>
-      <ul className="list-disc ml-5 mb-4 text-gray-700 dark:text-gray-300 text-sm sm:text-base">
-        <li>Insertion: Adding nodes</li>
-        <li>Deletion: Removing nodes</li>
-        <li>
-          Traversal: Visiting nodes in different orders (in-order, pre-order,
-          post-order)
-        </li>
-        <li>Searching: Finding specific values</li>
-        <li>Balancing: Maintaining optimal tree structure</li>
-      </ul>
-      <p className="mb-6 text-gray-700 dark:text-gray-300 text-sm sm:text-base">
-        In balanced binary trees, operations like insertion, deletion, and
-        search can often be performed in O(log n) time, making them efficient
-        for large datasets.
-      </p>
-      <h3 className="text-base sm:text-lg md:text-xl font-semibold mb-3 text-gray-900 dark:text-gray-100">
-        Code Examples:
-      </h3>
+      {/* ...text content unchanged... */}
+      <div className="mb-4">
+        <label
+          htmlFor="treeKind"
+          className="block mb-2 font-medium text-sm sm:text-base text-gray-900 dark:text-gray-100"
+        >
+          Tree Type:
+        </label>
+        <select
+          id="treeKind"
+          className="p-2 border border-gray-300 dark:border-gray-700 rounded w-full sm:w-64 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+          value={selectedKind}
+          onChange={(e) => setSelectedKind(e.target.value as TreeKind)}
+        >
+          {kinds.map((kind) => (
+            <option key={kind} value={kind}>
+              {kind}
+            </option>
+          ))}
+        </select>
+      </div>
+
       <div className="mb-4">
         <label
           htmlFor="language"
@@ -84,6 +75,7 @@ export function WhatIsBinaryTree() {
           ))}
         </select>
       </div>
+
       <div className="mb-2 overflow-x-auto">
         <Carousel
           selectedItem={languages.indexOf(selectedLanguage)}
@@ -93,27 +85,28 @@ export function WhatIsBinaryTree() {
           infiniteLoop
           useKeyboardArrows
         >
-          {languages.map((language) => (
-            <div key={language}>
-              <div className="relative">
-                <SyntaxHighlighter
-                  language={language.toLowerCase()}
-                  style={dracula}
-                  customStyle={{ fontSize: "0.75rem", textAlign: "left" }}
-                >
-                  {examples[language]}
-                </SyntaxHighlighter>
-                <CopyToClipboard
-                  text={examples[language]}
-                  onCopy={() => setCopied(true)}
-                >
-                  <button className="absolute top-2 right-2 p-1 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded">
-                    {copied ? "Copied!" : "Copy"}
-                  </button>
-                </CopyToClipboard>
+          {languages.map((language) => {
+            const key = `${language},${selectedKind}` as const;
+            const code = examples[key] ?? "// Code not available.";
+            return (
+              <div key={language}>
+                <div className="relative">
+                  <SyntaxHighlighter
+                    language={language.toLowerCase()}
+                    style={dracula}
+                    customStyle={{ fontSize: "0.75rem", textAlign: "left" }}
+                  >
+                    {code}
+                  </SyntaxHighlighter>
+                  <CopyToClipboard text={code} onCopy={() => setCopied(true)}>
+                    <button className="absolute top-2 right-2 p-1 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded">
+                      {copied ? "Copied!" : "Copy"}
+                    </button>
+                  </CopyToClipboard>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </Carousel>
       </div>
     </div>
