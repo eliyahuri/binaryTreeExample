@@ -33,7 +33,29 @@ export function WhatIsBinaryTree() {
       <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-4 text-center text-gray-900 dark:text-gray-100">
         What is a Binary Tree?
       </h2>
-      {/* ...text content unchanged... */}
+
+      <p className="text-sm sm:text-base text-gray-700 dark:text-gray-200 mb-6 leading-relaxed">
+        A <strong>Binary Tree</strong> is a hierarchical data structure in which
+        each node has at most two children, referred to as the <em>left</em>{" "}
+        child and the <em>right</em> child. It is used in various algorithms and
+        systems such as searching, sorting, and expression parsing. There are
+        multiple types of binary trees, such as:
+        <ul className="list-disc list-inside mt-2">
+          <li>
+            <strong>BST (Binary Search Tree)</strong> – keeps elements ordered
+            to allow fast lookup, insertion, and deletion.
+          </li>
+          <li>
+            <strong>AVL Tree</strong> – a self-balancing BST ensuring
+            logarithmic height by performing rotations.
+          </li>
+          <li>
+            <strong>Red-Black Tree</strong> – a balanced BST using color
+            properties to maintain efficient operations.
+          </li>
+        </ul>
+      </p>
+
       <div className="mb-4">
         <label
           htmlFor="treeKind"
