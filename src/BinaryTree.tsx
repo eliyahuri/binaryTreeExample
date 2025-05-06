@@ -219,7 +219,7 @@ export default function BinaryTree() {
   const [input, setInput] = useState("");
   const [viewBox, setViewBox] = useState("0 0 800 500");
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [lastRootId, setLastRootId] = useState<string | null>(null);
+  // Removed unused lastRootId state
 
   useEffect(() => {
     layoutTree(root);
@@ -243,7 +243,6 @@ export default function BinaryTree() {
     setViewBox(
       `${minX - H_GAP} ${minY - V_GAP} ${Math.max(800, w)} ${Math.max(500, h)}`
     );
-    setLastRootId(root?.id ?? null);
   }, [root]);
 
   const insert = () => {
