@@ -218,6 +218,7 @@ export default function BinaryTree() {
   const [root, setRoot] = useState<TreeNode | null>(null);
   const [input, setInput] = useState("");
   const [viewBox, setViewBox] = useState("0 0 800 500");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [lastRootId, setLastRootId] = useState<string | null>(null);
 
   useEffect(() => {
