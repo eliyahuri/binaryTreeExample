@@ -15,9 +15,6 @@ import {
   TreeNode,
 } from "./BinaryTree/utils/tree";
 
-/* ------------------------------------------------------------------ */
-// Node radius imported from utils for layout and padding calculations
-
 /**
  * BinaryTree component renders the interactive tree visualizer UI.
  * @returns JSX element containing controls and SVG visualization for binary/binomial trees.
