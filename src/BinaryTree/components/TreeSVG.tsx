@@ -26,12 +26,7 @@ interface TreeSVGProps {
  * @param props - The properties including tree kind, data, and SVG viewBox.
  * @returns JSX element representing the tree SVG.
  */
-export default function TreeSVG({
-  kind,
-  root,
-  binomialHead,
-  viewBox,
-}: TreeSVGProps) {
+export function TreeSVG({ kind, root, binomialHead, viewBox }: TreeSVGProps) {
   const renderEdges = (n: TreeNode | null): JSX.Element[] => {
     if (!n) return [];
     const edges: JSX.Element[] = [];
