@@ -8,6 +8,10 @@ import type { Languages } from "./types/language";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import type { TreeKind } from "./BinaryTree/utils/tree";
 
+/**
+ * Component that displays information and code examples for binary tree types in various languages.
+ * @returns JSX element containing explanatory text, selectors, and code carousel with copy functionality.
+ */
 export function WhatIsBinaryTree() {
   const [selectedLanguage, setSelectedLanguage] = useState<Languages>("Java");
   const [selectedKind, setSelectedKind] = useState<TreeKind>("BST");

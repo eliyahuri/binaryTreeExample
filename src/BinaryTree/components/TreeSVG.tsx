@@ -2,6 +2,18 @@ import { AnimatePresence, motion } from "framer-motion";
 import type { JSX } from "react";
 import { BinomialNode, Color, TreeKind, TreeNode } from "../utils/tree";
 
+/**
+ * Radius of each node circle in the SVG visualization.
+ */
+const NODE_R = 18;
+/**
+ * Font size for node value labels in the SVG.
+ */
+const FONT = 22;
+
+/**
+ * Props for the TreeSVG component.
+ */
 interface TreeSVGProps {
   kind: TreeKind;
   root: TreeNode | null;
@@ -9,9 +21,11 @@ interface TreeSVGProps {
   viewBox: string;
 }
 
-const NODE_R = 18;
-const FONT = 22;
-
+/**
+ * Renders an SVG visualization of the selected tree type (binary or binomial).
+ * @param props - The properties including tree kind, data, and SVG viewBox.
+ * @returns JSX element representing the tree SVG.
+ */
 export default function TreeSVG({
   kind,
   root,

@@ -4,6 +4,10 @@ import { Analytics } from "@vercel/analytics/react";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 
+/**
+ * Root component of the application.
+ * @returns The rendered App component JSX.
+ */
 function App() {
   const { ref, inView } = useInView({
     triggerOnce: true,

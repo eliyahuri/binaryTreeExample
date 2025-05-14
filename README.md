@@ -48,3 +48,7 @@ In this example:
 
 - [Wikipedia: Binary Tree](https://en.wikipedia.org/wiki/Binary_tree)
 - [GeeksforGeeks: Binary Tree](https://www.geeksforgeeks.org/binary-tree-data-structure/)
+
+## Documentation
+
+This project uses JSDoc-style comments to document types, functions, and React components throughout the codebase. Ensure to maintain and update JSDoc annotations when modifying code.

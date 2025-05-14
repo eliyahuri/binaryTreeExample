@@ -1,5 +1,8 @@
 import type { TreeKind } from "../utils/tree";
 
+/**
+ * Props for the Controls component used to interact with the tree.
+ */
 interface ControlsProps {
   kind: TreeKind;
   setKind: (kind: TreeKind) => void;
@@ -9,6 +12,11 @@ interface ControlsProps {
   onRemove: () => void;
 }
 
+/**
+ * Renders UI controls for selecting tree type, inputting values, and triggering insert/delete operations.
+ * @param props - The ControlsProps object.
+ * @returns JSX element containing the controls.
+ */
 export default function Controls({
   kind,
   setKind,

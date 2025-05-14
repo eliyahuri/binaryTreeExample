@@ -18,6 +18,10 @@ import {
 /* ------------------------------------------------------------------ */
 // Node radius imported from utils for layout and padding calculations
 
+/**
+ * BinaryTree component renders the interactive tree visualizer UI.
+ * @returns JSX element containing controls and SVG visualization for binary/binomial trees.
+ */
 export default function BinaryTree() {
   const [kind, setKind] = useState<TreeKind>("BST");
   const [root, setRoot] = useState<TreeNode | null>(null);

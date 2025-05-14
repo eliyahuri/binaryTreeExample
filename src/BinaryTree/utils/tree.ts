@@ -1,12 +1,19 @@
-// Utility types and functions for tree visualizer
-
+/**
+ * Union type representing the kinds of binary trees supported.
+ */
 export type TreeKind = "BST" | "AVL" | "RBT" | "Binomial";
 
+/**
+ * Enumeration of node colors for red-black trees.
+ */
 export enum Color {
   RED = "red",
   BLACK = "black",
 }
 
+/**
+ * Represents a node in a binary tree for visualization.
+ */
 export interface TreeNode {
   id: string;
   value: number;
@@ -33,6 +40,9 @@ export function createNode(value: number, color: Color): TreeNode {
 }
 
 // --- Binomial Tree Types ---
+/**
+ * Represents a node in a binomial heap structure.
+ */
 export interface BinomialNode {
   id: string;
   key: number;
@@ -77,6 +87,12 @@ function linkTrees(y: BinomialNode, z: BinomialNode) {
   z.degree++;
 }
 
+/**
+ * Unites two binomial heaps and returns the new heap head.
+ * @param h1 - The first binomial heap head.
+ * @param h2 - The second binomial heap head.
+ * @returns The head of the combined binomial heap.
+ */
 export function binomialUnion(
   h1: BinomialNode | null,
   h2: BinomialNode | null
@@ -107,6 +123,12 @@ export function binomialUnion(
   return head;
 }
 
+/**
+ * Inserts a key into a binomial heap.
+ * @param head - The current heap head.
+ * @param key - The key to insert into the heap.
+ * @returns The new heap head after insertion.
+ */
 export function binomialInsert(
   head: BinomialNode | null,
   key: number
@@ -115,6 +137,10 @@ export function binomialInsert(
   return binomialUnion(head, node) || null;
 }
 
+/**
+ * Computes layout positions for each tree in a binomial forest for rendering.
+ * @param head - The head of the binomial forest.
+ */
 export function layoutBinomialForest(head: BinomialNode | null) {
   let x = 0;
   const y = 0;
@@ -141,6 +167,10 @@ function layoutBinomialTree(node: BinomialNode, x: number, y: number) {
 
 const H_GAP = 70;
 const V_GAP = 90;
+/**
+ * Computes x and y positions for nodes in a binary tree.
+ * @param root - The root node of the binary tree.
+ */
 export function layoutTree(root: TreeNode | null) {
   let index = 0;
   const dfs = (node: TreeNode | null, depth: number) => {
@@ -188,6 +218,12 @@ function rotateRight(y: TreeNode): TreeNode {
   return x;
 }
 
+/**
+ * Inserts a value into a binary search tree and returns the new root.
+ * @param root - The root of the BST.
+ * @param value - The numeric value to insert.
+ * @returns The root of the BST after insertion.
+ */
 export function bstInsert(root: TreeNode | null, value: number): TreeNode {
   if (!root) return createNode(value, Color.BLACK);
   if (value < root.value) {
@@ -202,6 +238,12 @@ export function bstInsert(root: TreeNode | null, value: number): TreeNode {
   return root;
 }
 
+/**
+ * Inserts a value into an AVL tree and rebalances it.
+ * @param root - The root of the AVL tree.
+ * @param value - The value to insert.
+ * @returns The new root of the AVL tree.
+ */
 export function avlInsert(root: TreeNode | null, value: number): TreeNode {
   root = bstInsert(root, value);
 
@@ -226,6 +268,12 @@ export function avlInsert(root: TreeNode | null, value: number): TreeNode {
   return rebalance(root)!;
 }
 
+/**
+ * Inserts a value into a Red-Black tree and rebalances it.
+ * @param root - The root of the Red-Black tree.
+ * @param value - The value to insert.
+ * @returns The new root of the Red-Black tree.
+ */
 export function rbtInsert(root: TreeNode | null, value: number): TreeNode {
   let inserted: TreeNode | null = null;
 
@@ -292,6 +340,12 @@ export function rbtInsert(root: TreeNode | null, value: number): TreeNode {
   return root;
 }
 
+/**
+ * Deletes a value from a binary search tree and returns the new root.
+ * @param root - The root of the BST.
+ * @param value - The value to delete.
+ * @returns The root of the BST after deletion, or null if tree is empty.
+ */
 export function bstDelete(
   root: TreeNode | null,
   value: number
