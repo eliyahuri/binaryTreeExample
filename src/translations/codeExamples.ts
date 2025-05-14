@@ -1,5 +1,5 @@
+import type { TreeKind } from "../BinaryTree/utils/tree";
 import type { Languages } from "../types/language";
-import { TreeKind } from "../BinaryTree";
 
 // Nested object for code examples by language and tree type
 const codeTemplates: Record<Languages, Record<TreeKind, string>> = {

@@ -5,8 +5,8 @@ import { getCodeExample } from "./translations/codeExamples";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import type { Languages } from "./types/language";
-import { TreeKind } from "./BinaryTree";
 import { CopyToClipboard } from "react-copy-to-clipboard";
+import type { TreeKind } from "./BinaryTree/utils/tree";
 
 export function WhatIsBinaryTree() {
   const [selectedLanguage, setSelectedLanguage] = useState<Languages>("Java");
