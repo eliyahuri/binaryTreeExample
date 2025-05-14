@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Light as SyntaxHighlighter } from "react-syntax-highlighter";
 import { dracula } from "react-syntax-highlighter/dist/esm/styles/hljs";
-import { examples } from "./translations/codeExamples";
+import { getCodeExample } from "./translations/codeExamples";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import type { Languages } from "./types/language";
@@ -108,8 +108,9 @@ export function WhatIsBinaryTree() {
           useKeyboardArrows
         >
           {languages.map((language) => {
-            const key = `${language},${selectedKind}` as const;
-            const code = examples[key] ?? "// Code not available.";
+            const code =
+              getCodeExample(language, selectedKind) ??
+              "// Code not available.";
             return (
               <div key={language}>
                 <div className="relative">
