@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Controls from "./BinaryTree/components/Controls";
-import { TreeSVG } from "./BinaryTree/components/TreeSvg";
+import { TreeSVG } from "./BinaryTree/components/TreeSVG";
 import {
   avlInsert,
   binomialInsert,
