@@ -1,19 +1,19 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import Controls from "./BinaryTree/components/Controls";
+import TreeSVG from "./BinaryTree/components/TreeSvg";
 import {
-  TreeKind,
-  TreeNode,
-  BinomialNode,
+  avlInsert,
   binomialInsert,
+  BinomialNode,
+  bstDelete,
+  bstInsert,
   layoutBinomialForest,
   layoutTree,
-  bstInsert,
-  avlInsert,
-  rbtInsert,
-  bstDelete,
   NODE_R,
+  rbtInsert,
+  TreeKind,
+  TreeNode,
 } from "./BinaryTree/utils/tree";
-import TreeSVG from "./BinaryTree/components/TreeSvg";
 
 /* ------------------------------------------------------------------ */
 // Node radius imported from utils for layout and padding calculations
@@ -27,6 +27,8 @@ export default function BinaryTree() {
 
   useEffect(() => {
     if (kind === "Binomial") {
+      // Only layout when there's a binomial forest to display
+      if (!binomialHead) return;
       layoutBinomialForest(binomialHead);
       // Compute extents
       let minX = Infinity,
@@ -51,8 +53,24 @@ export default function BinaryTree() {
       collect(binomialHead);
 
       const padding = NODE_R * 2;
+      // Shift down so tree isn't clipped at top
+      const yShift = -minY + padding;
+      const shiftTree = (node: BinomialNode | null) => {
+        if (!node) return;
+        node.y! += yShift;
+        let child = node.child;
+        while (child) {
+          shiftTree(child);
+          child = child.sibling;
+        }
+        shiftTree(node.sibling);
+      };
+      shiftTree(binomialHead);
+      minY += yShift;
+      maxY += yShift;
+
       const viewX = minX - padding;
-      const viewY = minY - padding;
+      const viewY = 0;
       const viewW = maxX - minX + padding * 2;
       const viewH = maxY - minY + padding * 2;
       setViewBox(`${viewX} ${viewY} ${viewW} ${viewH}`);
