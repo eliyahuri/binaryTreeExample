@@ -10,31 +10,31 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tailwindcss/vite": "^4.0.8",
+    "@tailwindcss/vite": "^4.1.6",
     "@types/react-copy-to-clipboard": "^5.0.7",
     "@vercel/analytics": "^1.5.0",
-    "framer-motion": "^12.4.7",
-    "react": "^19.0.0",
+    "framer-motion": "^12.11.0",
+    "react": "^19.1.0",
     "react-copy-to-clipboard": "^5.1.0",
-    "react-dom": "^19.0.0",
-    "react-intersection-observer": "^9.15.1",
+    "react-dom": "^19.1.0",
+    "react-intersection-observer": "^9.16.0",
     "react-responsive-carousel": "^3.2.23",
     "react-syntax-highlighter": "^15.6.1",
-    "tailwindcss": "^4.0.8"
+    "tailwindcss": "^4.1.6"
   },
   "devDependencies": {
-    "@eslint/js": "^9.21.0",
-    "@types/react": "^19.0.10",
-    "@types/react-dom": "^19.0.4",
+    "@eslint/js": "^9.26.0",
+    "@types/react": "^19.1.4",
+    "@types/react-dom": "^19.1.5",
     "@types/react-syntax-highlighter": "^15.5.13",
-    "@vitejs/plugin-react-swc": "^3.8.0",
-    "eslint": "^9.21.0",
-    "eslint-plugin-react-hooks": "^5.1.0",
-    "eslint-plugin-react-refresh": "^0.4.19",
+    "@vitejs/plugin-react-swc": "^3.9.0",
+    "eslint": "^9.26.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^15.15.0",
     "typescript": "~5.7.3",
-    "typescript-eslint": "^8.24.1",
-    "vite": "^6.1.1"
+    "typescript-eslint": "^8.32.1",
+    "vite": "^6.3.5"
   },
   "pnpm": {
     "ignoredBuiltDependencies": [
@@ -43,6 +43,7 @@
     ],
     "onlyBuiltDependencies": [
       "@swc/core",
+      "@tailwindcss/oxide",
       "esbuild"
     ]
   }
