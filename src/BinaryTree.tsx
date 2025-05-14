@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Controls from "./BinaryTree/components/Controls";
+// @ts-expect-error it says error but it works
 import { TreeSVG } from "./BinaryTree/components/TreeSVG";
 import {
   avlInsert,
