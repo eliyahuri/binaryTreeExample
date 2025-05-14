@@ -21,7 +21,7 @@ export function WhatIsBinaryTree() {
     "Python",
   ];
 
-  const kinds: TreeKind[] = ["BST", "AVL", "RBT"];
+  const kinds: TreeKind[] = ["BST", "AVL", "RBT", "Binomial"];
 
   const handleCarouselChange = (index: number) => {
     setSelectedLanguage(languages[index]);

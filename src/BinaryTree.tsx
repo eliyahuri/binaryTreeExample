@@ -2,7 +2,7 @@ import { useState, useEffect, type JSX } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 /* ------------------------------------------------------------------ */
-export type TreeKind = "BST" | "AVL" | "RBT";
+export type TreeKind = "BST" | "AVL" | "RBT" | "Binomial";
 
 export enum Color {
   RED = "red",
@@ -32,6 +32,112 @@ function createNode(value: number, color: Color): TreeNode {
     x: 0,
     y: 0,
   };
+}
+
+// --- Binomial Tree Types ---
+interface BinomialNode {
+  id: string;
+  key: number;
+  degree: number;
+  parent: BinomialNode | null;
+  child: BinomialNode | null;
+  sibling: BinomialNode | null;
+  x?: number;
+  y?: number;
+}
+
+function createBinomialNode(key: number): BinomialNode {
+  return {
+    id: `bnode-${nodeIdCounter++}`,
+    key,
+    degree: 0,
+    parent: null,
+    child: null,
+    sibling: null,
+  };
+}
+
+function mergeRootLists(
+  h1: BinomialNode | null,
+  h2: BinomialNode | null
+): BinomialNode | null {
+  if (!h1) return h2;
+  if (!h2) return h1;
+  if (h1.degree <= h2.degree) {
+    h1.sibling = mergeRootLists(h1.sibling, h2);
+    return h1;
+  } else {
+    h2.sibling = mergeRootLists(h1, h2.sibling);
+    return h2;
+  }
+}
+
+function linkTrees(y: BinomialNode, z: BinomialNode) {
+  y.parent = z;
+  y.sibling = z.child;
+  z.child = y;
+  z.degree++;
+}
+
+function binomialUnion(
+  h1: BinomialNode | null,
+  h2: BinomialNode | null
+): BinomialNode | null {
+  let head = mergeRootLists(h1, h2);
+  if (!head) return null;
+  let prev: BinomialNode | null = null;
+  let curr: BinomialNode | null = head;
+  let next: BinomialNode | null = head.sibling;
+  while (next) {
+    if (
+      curr!.degree !== next.degree ||
+      (next.sibling && next.sibling.degree === curr!.degree)
+    ) {
+      prev = curr;
+      curr = next;
+    } else if (curr!.key <= next.key) {
+      curr!.sibling = next.sibling;
+      linkTrees(next, curr!);
+    } else {
+      if (prev) prev.sibling = next;
+      else head = next;
+      linkTrees(curr!, next);
+      curr = next;
+    }
+    next = curr!.sibling;
+  }
+  return head;
+}
+
+function binomialInsert(
+  head: BinomialNode | null,
+  key: number
+): BinomialNode | null {
+  const node = createBinomialNode(key);
+  return binomialUnion(head, node) || null;
+}
+
+function layoutBinomialForest(head: BinomialNode | null) {
+  let x = 0;
+  const y = 0;
+  let curr = head;
+  while (curr) {
+    layoutBinomialTree(curr, x, y);
+    x += 120;
+    curr = curr.sibling;
+  }
+}
+function layoutBinomialTree(node: BinomialNode, x: number, y: number) {
+  node.x = x;
+  node.y = y;
+  let child = node.child;
+  let cx = x - 40 * node.degree;
+  const cy = y + 80;
+  while (child) {
+    layoutBinomialTree(child, cx, cy);
+    cx += 80;
+    child = child.sibling;
+  }
 }
 
 /* ------------------------------------------------------------------ */
@@ -216,43 +322,99 @@ const FONT = 22;
 export default function BinaryTree() {
   const [kind, setKind] = useState<TreeKind>("BST");
   const [root, setRoot] = useState<TreeNode | null>(null);
+  const [binomialHead, setBinomialHead] = useState<BinomialNode | null>(null);
   const [input, setInput] = useState("");
   const [viewBox, setViewBox] = useState("0 0 800 500");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  // Removed unused lastRootId state
 
   useEffect(() => {
-    layoutTree(root);
-    if (!root) return;
-    let minX = Infinity,
-      maxX = -Infinity,
-      minY = Infinity,
-      maxY = -Infinity;
-    const visit = (n: TreeNode | null) => {
-      if (!n) return;
-      minX = Math.min(minX, n.x);
-      maxX = Math.max(maxX, n.x);
-      minY = Math.min(minY, n.y);
-      maxY = Math.max(maxY, n.y);
-      visit(n.left);
-      visit(n.right);
-    };
-    visit(root);
-    const w = maxX - minX + 2 * H_GAP;
-    const h = maxY - minY + 2 * V_GAP;
-    setViewBox(
-      `${minX - H_GAP} ${minY - V_GAP} ${Math.max(800, w)} ${Math.max(500, h)}`
-    );
-  }, [root]);
+    if (kind === "Binomial") {
+      layoutBinomialForest(binomialHead);
+      // Compute extents
+      let minX = Infinity,
+        maxX = -Infinity,
+        minY = Infinity,
+        maxY = -Infinity;
+      const collect = (node: BinomialNode | null) => {
+        if (!node) return;
+        if (node.x != null && node.y != null) {
+          minX = Math.min(minX, node.x);
+          maxX = Math.max(maxX, node.x);
+          minY = Math.min(minY, node.y);
+          maxY = Math.max(maxY, node.y);
+        }
+        let child = node.child;
+        while (child) {
+          collect(child);
+          child = child.sibling;
+        }
+        collect(node.sibling);
+      };
+      collect(binomialHead);
+
+      const padding = NODE_R * 2;
+      const viewX = minX - padding;
+      const viewY = minY - padding;
+      const viewW = maxX - minX + padding * 2;
+      const viewH = maxY - minY + padding * 2;
+      setViewBox(`${viewX} ${viewY} ${viewW} ${viewH}`);
+    } else {
+      if (root) {
+        layoutTree(root);
+        // Compute extents
+        let minX = Infinity,
+          maxX = -Infinity,
+          minY = Infinity,
+          maxY = -Infinity;
+        const visit = (n: TreeNode | null) => {
+          if (!n) return;
+          minX = Math.min(minX, n.x);
+          maxX = Math.max(maxX, n.x);
+          minY = Math.min(minY, n.y);
+          maxY = Math.max(maxY, n.y);
+          visit(n.left);
+          visit(n.right);
+        };
+        visit(root);
+
+        const padding = NODE_R * 1.5;
+        // Shift tree down so it's not clipped at top
+        const yShift = -minY + padding;
+        const applyYShift = (n: TreeNode | null) => {
+          if (!n) return;
+          n.y += yShift;
+          applyYShift(n.left);
+          applyYShift(n.right);
+        };
+        applyYShift(root);
+
+        const viewX = minX - padding;
+        const viewY = 0; // already shifted y
+        const viewW = maxX - minX + padding * 2;
+        const viewH = maxY - minY + padding * 3;
+
+        setViewBox(`${viewX} ${viewY} ${viewW} ${viewH}`);
+      }
+    }
+  }, [root, binomialHead, kind]);
+
+  useEffect(() => {
+    setRoot(null);
+    setBinomialHead(null);
+    setInput("");
+  }, [kind]);
 
   const insert = () => {
     const val = Number(input);
     if (isNaN(val)) return;
+    if (kind === "Binomial") {
+      setBinomialHead((prev) => binomialInsert(prev, val));
+      setInput("");
+      return;
+    }
     let updated: TreeNode;
     if (kind === "AVL") updated = avlInsert(root, val);
     else if (kind === "RBT") updated = rbtInsert(root, val);
     else updated = bstInsert(root, val);
-    layoutTree(updated);
     setRoot({ ...updated });
     setInput("");
   };
@@ -260,8 +422,11 @@ export default function BinaryTree() {
   const remove = () => {
     const val = Number(input);
     if (isNaN(val)) return;
+    if (kind === "Binomial") {
+      setInput("");
+      return;
+    }
     const updated = bstDelete(root, val);
-    layoutTree(updated);
     setRoot(updated ? { ...updated } : null);
     setInput("");
   };
@@ -312,10 +477,12 @@ export default function BinaryTree() {
         transition={{ type: "spring", stiffness: 300, damping: 20 }}
       >
         <motion.circle
-          r={NODE_R}
-          animate={{
-            fill: n.color === Color.RED ? "#fecaca" : "#bfdbfe",
-          }}
+          r={
+            n.parent
+              ? NODE_R
+              : NODE_R * Math.max(0.5, 1 - (height(root) - 1) * 0.05)
+          }
+          animate={{ fill: n.color === Color.RED ? "#fecaca" : "#bfdbfe" }}
           transition={{ duration: 0.3 }}
           stroke="#000"
           strokeWidth={2}
@@ -330,6 +497,60 @@ export default function BinaryTree() {
     return items;
   };
 
+  const renderBinomialEdges = (node: BinomialNode | null): JSX.Element[] => {
+    if (!node) return [];
+    const edges: JSX.Element[] = [];
+    let child = node.child;
+    while (child) {
+      edges.push(
+        <line
+          key={`${node.id}-${child.id}`}
+          x1={node.x!}
+          y1={node.y!}
+          x2={child.x!}
+          y2={child.y!}
+          stroke="#666"
+          strokeWidth={2}
+        />
+      );
+      edges.push(...renderBinomialEdges(child));
+      child = child.sibling;
+    }
+    return edges;
+  };
+
+  const renderBinomialNodes = (node: BinomialNode | null): JSX.Element[] => {
+    if (!node) return [];
+    const items: JSX.Element[] = [];
+    items.push(
+      <motion.g
+        key={node.id}
+        initial={{ opacity: 0, scale: 0.5 }}
+        animate={{ opacity: 1, scale: 1, x: node.x, y: node.y }}
+        exit={{ opacity: 0, scale: 0 }}
+        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      >
+        <motion.circle
+          r={NODE_R}
+          animate={{ fill: "#fde68a" }}
+          transition={{ duration: 0.3 }}
+          stroke="#000"
+          strokeWidth={2}
+        />
+        <text y={6} textAnchor="middle" fontSize={FONT} fill="#111">
+          {node.key}
+        </text>
+      </motion.g>
+    );
+    let child = node.child;
+    while (child) {
+      items.push(...renderBinomialNodes(child));
+      child = child.sibling;
+    }
+    items.push(...renderBinomialNodes(node.sibling));
+    return items;
+  };
+
   return (
     <div className="flex flex-col items-center p-2 sm:p-4 dark:bg-gray-900 dark:text-gray-200 min-h-screen">
       <h1 className="text-3xl sm:text-4xl font-bold mb-3 sm:mb-4 text-center">
@@ -338,15 +559,13 @@ export default function BinaryTree() {
       <div className="flex flex-wrap gap-2 mb-3 sm:mb-4 items-center w-full justify-center">
         <select
           value={kind}
-          onChange={(e) => {
-            setKind(e.target.value as TreeKind);
-            setRoot(null);
-          }}
+          onChange={(e) => setKind(e.target.value as TreeKind)}
           className="border px-2 py-1 rounded dark:bg-gray-800 text-base sm:text-lg"
         >
           <option value="BST">Binary Search Tree</option>
           <option value="AVL">AVL Tree</option>
           <option value="RBT">Red‑Black Tree</option>
+          <option value="Binomial">Binomial Tree</option>
         </select>
         <input
           type="number"
@@ -369,19 +588,23 @@ export default function BinaryTree() {
         </button>
       </div>
 
-      <div className="w-full min-w-0 overflow-x-auto border rounded shadow-inner bg-white dark:bg-gray-800">
-        <div className="min-w-[400px] sm:min-w-[600px] md:min-w-[800px]">
-          <svg
-            width="100%"
-            height="300"
-            className="sm:h-[400px] md:h-[500px]"
-            viewBox={viewBox}
-            style={{ display: "block" }}
-          >
-            {renderEdges(root)}
-            <AnimatePresence>{renderNodes(root)}</AnimatePresence>
-          </svg>
-        </div>
+      <div className="w-full border rounded shadow-inner overflow-hidden">
+        <svg
+          width="100%"
+          height="auto"
+          viewBox={viewBox}
+          preserveAspectRatio="xMidYMid meet"
+          style={{ display: "block" }}
+        >
+          {kind === "Binomial"
+            ? renderBinomialEdges(binomialHead)
+            : renderEdges(root)}
+          <AnimatePresence>
+            {kind === "Binomial"
+              ? renderBinomialNodes(binomialHead)
+              : renderNodes(root)}
+          </AnimatePresence>
+        </svg>
       </div>
     </div>
   );
