@@ -25,7 +25,18 @@ export interface TreeNode {
   y: number;
 }
 
+/**
+ * Global counter used to generate unique node identifiers.
+ */
 let nodeIdCounter = 0;
+
+/**
+ * Creates a {@link TreeNode} with default positional values.
+ *
+ * @param value - Numeric value to store in the node.
+ * @param color - Initial color of the node.
+ * @returns Newly created tree node instance.
+ */
 export function createNode(value: number, color: Color): TreeNode {
   return {
     id: `node-${nodeIdCounter++}`,
@@ -54,6 +65,12 @@ export interface BinomialNode {
   y?: number;
 }
 
+/**
+ * Creates a node for a binomial tree/heap.
+ *
+ * @param key - Numeric key associated with the node.
+ * @returns Newly created binomial node.
+ */
 export function createBinomialNode(key: number): BinomialNode {
   return {
     id: `bnode-${nodeIdCounter++}`,
@@ -65,6 +82,9 @@ export function createBinomialNode(key: number): BinomialNode {
   };
 }
 
+/**
+ * Merges two binomial heap root lists ordered by degree.
+ */
 function mergeRootLists(
   h1: BinomialNode | null,
   h2: BinomialNode | null
@@ -80,6 +100,9 @@ function mergeRootLists(
   }
 }
 
+/**
+ * Links two binomial trees of the same degree.
+ */
 function linkTrees(y: BinomialNode, z: BinomialNode) {
   y.parent = z;
   y.sibling = z.child;
@@ -152,6 +175,13 @@ export function layoutBinomialForest(head: BinomialNode | null) {
   }
 }
 
+/**
+ * Recursively computes layout coordinates for nodes in a single binomial tree.
+ *
+ * @param node - Root node of the binomial tree.
+ * @param x - Starting x-coordinate for this subtree.
+ * @param y - Starting y-coordinate for this subtree.
+ */
 function layoutBinomialTree(node: BinomialNode, x: number, y: number) {
   node.x = x;
   node.y = y;
@@ -165,7 +195,9 @@ function layoutBinomialTree(node: BinomialNode, x: number, y: number) {
   }
 }
 
+/** Horizontal spacing between tree nodes when laid out. */
 const H_GAP = 70;
+/** Vertical spacing between tree levels when laid out. */
 const V_GAP = 90;
 /**
  * Computes x and y positions for nodes in a binary tree.
@@ -184,12 +216,23 @@ export function layoutTree(root: TreeNode | null) {
   dfs(root, 0);
 }
 
+/** Checks whether a node is red in a Red-Black tree. */
 const isRed = (n: TreeNode | null) => n !== null && n.color === Color.RED;
+/**
+ * Recursively computes the height of a tree.
+ * @param n - Node to measure from.
+ */
 const height = (n: TreeNode | null): number =>
   n ? 1 + Math.max(height(n.left), height(n.right)) : 0;
+/**
+ * Calculates the balance factor of a node used in AVL rebalancing.
+ */
 const balanceFactor = (n: TreeNode | null) =>
   n ? height(n.left) - height(n.right) : 0;
 
+/**
+ * Performs a left rotation around the given node.
+ */
 function rotateLeft(x: TreeNode): TreeNode {
   const y = x.right!;
   x.right = y.left;
@@ -204,6 +247,9 @@ function rotateLeft(x: TreeNode): TreeNode {
   return y;
 }
 
+/**
+ * Performs a right rotation around the given node.
+ */
 function rotateRight(y: TreeNode): TreeNode {
   const x = y.left!;
   y.left = x.right;
@@ -364,5 +410,7 @@ export function bstDelete(
   return root;
 }
 
-// Node radius constant for layout calculations
+/**
+ * Radius of rendered nodes used when calculating view box padding.
+ */
 export const NODE_R = 18;
