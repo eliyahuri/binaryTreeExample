@@ -110,6 +110,8 @@ export function TreeSVG({ kind, root, binomialHead, viewBox }: TreeSVGProps) {
       edges.push(...renderBinomialEdges(child));
       child = child.sibling;
     }
+    // Also render edges for any sibling trees so the entire forest is shown
+    edges.push(...renderBinomialEdges(node.sibling));
     return edges;
   };
 
