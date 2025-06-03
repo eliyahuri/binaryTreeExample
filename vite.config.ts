@@ -7,4 +7,13 @@ import tailwindcss from "@tailwindcss/vite";
  */
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  test: {
+    globals: true,
+    environment: "node",
+    include: ["**/*.test.ts"],
+    deps: { inline: ["@vitejs/plugin-react-swc"] },
+    coverage: {
+      reporter: ["text", "html"],
+    },
+  },
 });
