@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import Controls from "./BinaryTree/components/Controls";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore it says error but it works
 import { TreeSVG } from "./BinaryTree/components/TreeSVG";
 import {
   avlInsert,
@@ -123,6 +121,11 @@ export default function BinaryTree() {
     setInput("");
   }, [kind]);
 
+  /**
+   * Inserts the numeric value currently typed into the input.
+   *
+   * Handles the logic for the selected tree kind and clears the input.
+   */
   const insert = () => {
     const val = Number(input);
     if (isNaN(val)) return;
@@ -139,6 +142,12 @@ export default function BinaryTree() {
     setInput("");
   };
 
+  /**
+   * Removes the node matching the value in the input from the tree.
+   *
+   * Only applicable for binary search based trees; binomial trees are
+   * immutable in this demo and thus ignore removal.
+   */
   const remove = () => {
     const val = Number(input);
     if (isNaN(val)) return;
