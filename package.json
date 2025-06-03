@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.6",
@@ -34,7 +35,8 @@
     "globals": "^15.15.0",
     "typescript": "~5.7.3",
     "typescript-eslint": "^8.32.1",
-    "vite": "^6.3.5"
+    "vite": "^6.3.5",
+    "vitest": "^3.2.1"
   },
   "pnpm": {
     "ignoredBuiltDependencies": [
