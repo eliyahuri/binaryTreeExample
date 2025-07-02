@@ -1,1 +1,97 @@
 @import "tailwindcss";
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(45deg, #2563eb, #7c3aed);
+}
+
+/* Carousel custom styles */
+.code-carousel .carousel .slide {
+  background: transparent;
+}
+
+.code-carousel .carousel .control-dots {
+  bottom: -40px;
+}
+
+.code-carousel .carousel .dot {
+  background: rgba(59, 130, 246, 0.3) !important;
+  border: 2px solid rgba(59, 130, 246, 0.5) !important;
+  width: 12px !important;
+  height: 12px !important;
+  margin: 0 6px !important;
+}
+
+.code-carousel .carousel .dot.selected {
+  background: linear-gradient(45deg, #3b82f6, #8b5cf6) !important;
+  border: 2px solid rgba(59, 130, 246, 0.8) !important;
+}
+
+.code-carousel .carousel .control-arrow {
+  background: rgba(59, 130, 246, 0.8) !important;
+  border-radius: 50% !important;
+  width: 40px !important;
+  height: 40px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+}
+
+.code-carousel .carousel .control-arrow:hover {
+  background: rgba(59, 130, 246, 1) !important;
+}
+
+/* Animation utilities */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Backdrop blur fallback */
+@supports not (backdrop-filter: blur(10px)) {
+  .backdrop-blur-md {
+    background-color: rgba(255, 255, 255, 0.8);
+  }
+
+  .dark .backdrop-blur-md {
+    background-color: rgba(17, 24, 39, 0.8);
+  }
+}
+
+/* Global focus styles */
+*:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Smooth transitions for theme changes */
+* {
+  transition-property: color, background-color, border-color,
+    text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+}

@@ -1,4 +1,7 @@
 import type { TreeKind } from "../utils/tree";
+import { Button } from "../../components/shared/Button";
+import { Input } from "../../components/shared/Input";
+import { Select } from "../../components/shared/Select";
 
 /**
  * Props for the Controls component used to interact with the tree.
@@ -10,6 +13,7 @@ interface ControlsProps {
   setInput: (input: string) => void;
   onInsert: () => void;
   onRemove: () => void;
+  onExtractMin?: () => void;
 }
 
 /**
@@ -24,38 +28,57 @@ export default function Controls({
   setInput,
   onInsert,
   onRemove,
+  onExtractMin,
 }: ControlsProps) {
   return (
-    <div className="flex flex-wrap gap-2 mb-3 sm:mb-4 items-center w-full justify-center">
-      <select
-        value={kind}
-        onChange={(e) => setKind(e.target.value as TreeKind)}
-        className="border px-2 py-1 rounded dark:bg-gray-800 text-base sm:text-lg"
-      >
-        <option value="BST">Binary Search Tree</option>
-        <option value="AVL">AVL Tree</option>
-        <option value="RBT">Red-Black Tree</option>
-        <option value="Binomial">Binomial Tree</option>
-      </select>
-      <input
-        type="number"
-        className="border rounded px-3 py-2 w-28 sm:w-32 text-base sm:text-lg"
-        placeholder="value"
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-      />
-      <button
-        onClick={onInsert}
-        className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded text-base sm:text-lg"
-      >
-        Insert
-      </button>
-      <button
-        onClick={onRemove}
-        className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded text-base sm:text-lg"
-      >
-        Delete
-      </button>
+    <div className="flex flex-wrap gap-4 mb-6 items-center justify-center p-6 bg-white/60 dark:bg-gray-900/60 backdrop-blur-md rounded-2xl border border-white/20 dark:border-gray-700/20 shadow-xl">
+      <div className="flex flex-col items-center gap-2">
+        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          Tree Type
+        </label>
+        <Select
+          value={kind}
+          onChange={(e) => setKind(e.target.value as TreeKind)}
+          className="min-w-[180px]"
+        >
+          <option value="BST">Binary Search Tree</option>
+          <option value="AVL">AVL Tree</option>
+          <option value="RBT">Red-Black Tree</option>
+          <option value="Binomial">Binomial Heap</option>
+        </Select>
+      </div>
+
+      <div className="flex flex-col items-center gap-2">
+        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          Value
+        </label>
+        <Input
+          type="number"
+          className="w-32"
+          placeholder="Enter value"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+        />
+      </div>
+
+      <div className="flex gap-3 mt-6">
+        <Button onClick={onInsert} variant="primary" size="md">
+          Insert
+        </Button>
+        <Button
+          onClick={onRemove}
+          variant="danger"
+          size="md"
+          disabled={kind === "Binomial"}
+        >
+          Delete
+        </Button>
+        {kind === "Binomial" && onExtractMin && (
+          <Button onClick={onExtractMin} variant="success" size="md">
+            Extract Min
+          </Button>
+        )}
+      </div>
     </div>
   );
 }

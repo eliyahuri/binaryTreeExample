@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import Controls from "./BinaryTree/components/Controls";
 import { TreeSVG } from "./BinaryTree/components/TreeSVG";
 import {
   avlInsert,
   binomialInsert,
+  binomialExtractMin,
   BinomialNode,
   bstDelete,
   bstInsert,
@@ -160,27 +162,63 @@ export default function BinaryTree() {
     setInput("");
   };
 
+  /**
+   * Extracts the minimum value from the binomial heap.
+   * Only applicable for binomial heaps.
+   */
+  const extractMin = () => {
+    if (kind !== "Binomial") return;
+    const [newHead] = binomialExtractMin(binomialHead);
+    setBinomialHead(newHead);
+  };
+
   return (
-    <div className="flex flex-col items-center p-2 sm:p-4 dark:bg-gray-900 dark:text-gray-200 min-h-screen">
-      <h1 className="text-3xl sm:text-4xl font-bold mb-3 sm:mb-4 text-center">
-        Tree Visualiser
-      </h1>
-      <Controls
-        kind={kind}
-        setKind={setKind}
-        input={input}
-        setInput={setInput}
-        onInsert={insert}
-        onRemove={remove}
-      />
-      <div className="w-full border rounded shadow-inner overflow-hidden">
+    <div className="flex flex-col items-center space-y-8">
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="text-center"
+      >
+        <h1 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">
+          Tree Visualizer
+        </h1>
+        <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+          Interactive visualization of binary search trees, AVL trees, red-black
+          trees, and binomial heaps
+        </p>
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="w-full max-w-6xl"
+      >
+        <Controls
+          kind={kind}
+          setKind={setKind}
+          input={input}
+          setInput={setInput}
+          onInsert={insert}
+          onRemove={remove}
+          onExtractMin={extractMin}
+        />
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.4 }}
+        className="w-full max-w-6xl"
+      >
         <TreeSVG
           kind={kind}
           root={root}
           binomialHead={binomialHead}
           viewBox={viewBox}
         />
-      </div>
+      </motion.div>
     </div>
   );
 }
