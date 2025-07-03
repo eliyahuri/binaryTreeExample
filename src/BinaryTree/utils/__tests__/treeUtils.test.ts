@@ -1,33 +1,6 @@
 import { describe, it, expect } from "vitest";
-import {
-  binomialFindMin,
-  binomialExtractMin,
-  binomialUnion,
-  createBinomialNode,
-  layoutTree,
-  bstInsert,
-} from "../tree";
+import { layoutTree, bstInsert } from "../tree";
 import type { TreeNode } from "../tree";
-
-// Binomial heap edge cases
-
-describe("Binomial heap edge cases", () => {
-  it("findMin on empty heap returns null", () => {
-    expect(binomialFindMin(null)).toBeNull();
-  });
-
-  it("extractMin on empty heap returns [null, null]", () => {
-    const [h, m] = binomialExtractMin(null);
-    expect(h).toBeNull();
-    expect(m).toBeNull();
-  });
-
-  it("union with null and a tree returns the tree unchanged", () => {
-    const node = createBinomialNode(5);
-    expect(binomialUnion(null, node)).toBe(node);
-    expect(binomialUnion(node, null)).toBe(node);
-  });
-});
 
 // Binary tree layout
 

@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import type { JSX } from "react";
-import { BinomialNode, Color, TreeKind, TreeNode } from "../utils/tree";
+import { Color, TreeNode } from "../utils/tree";
 
 /**
  * Radius of each node circle in the SVG visualization.
@@ -15,9 +15,7 @@ const FONT = 16;
  * Props for the TreeSVG component.
  */
 interface TreeSVGProps {
-  kind: TreeKind;
   root: TreeNode | null;
-  binomialHead: BinomialNode | null;
   viewBox: string;
 }
 
@@ -26,7 +24,7 @@ interface TreeSVGProps {
  * @param props - The properties including tree kind, data, and SVG viewBox.
  * @returns JSX element representing the tree SVG.
  */
-export function TreeSVG({ kind, root, binomialHead, viewBox }: TreeSVGProps) {
+export function TreeSVG({ root, viewBox }: TreeSVGProps) {
   const renderEdges = (n: TreeNode | null): JSX.Element[] => {
     if (!n) return [];
     const edges: JSX.Element[] = [];
@@ -126,96 +124,6 @@ export function TreeSVG({ kind, root, binomialHead, viewBox }: TreeSVGProps) {
     return items;
   };
 
-  const renderBinomialEdges = (node: BinomialNode | null): JSX.Element[] => {
-    if (!node) return [];
-    const edges: JSX.Element[] = [];
-    let child = node.child;
-    while (child) {
-      edges.push(
-        <motion.line
-          key={`${node.id}-${child.id}`}
-          x1={node.x!}
-          y1={node.y!}
-          x2={child.x!}
-          y2={child.y!}
-          stroke="url(#binomialEdgeGradient)"
-          strokeWidth={3}
-          strokeLinecap="round"
-          initial={{ pathLength: 0, opacity: 0 }}
-          animate={{ pathLength: 1, opacity: 1 }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
-        />
-      );
-      edges.push(...renderBinomialEdges(child));
-      child = child.sibling;
-    }
-    edges.push(...renderBinomialEdges(node.sibling));
-    return edges;
-  };
-
-  const renderBinomialNodes = (node: BinomialNode | null): JSX.Element[] => {
-    if (!node) return [];
-    const items: JSX.Element[] = [];
-
-    // Determine if this is a root node (has no parent)
-    const isRoot = !node.parent;
-    const nodeSize = isRoot ? NODE_R * 1.3 : NODE_R;
-
-    items.push(
-      <motion.g
-        key={node.id}
-        initial={{ opacity: 0, scale: 0.3 }}
-        animate={{ opacity: 1, scale: 1, x: node.x, y: node.y }}
-        exit={{ opacity: 0, scale: 0 }}
-        transition={{ type: "spring", stiffness: 300, damping: 25 }}
-      >
-        <motion.circle
-          r={nodeSize}
-          fill="#a855f7"
-          stroke="#ffffff"
-          strokeWidth={3}
-          filter="url(#glow-binomial)"
-          whileHover={{ scale: 1.1 }}
-          transition={{ duration: 0.2 }}
-        />
-        <motion.text
-          y={6}
-          textAnchor="middle"
-          fontSize={FONT}
-          fontWeight="600"
-          fill="#ffffff"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-        >
-          {node.key}
-        </motion.text>
-        {isRoot && (
-          <motion.text
-            y={-nodeSize - 10}
-            textAnchor="middle"
-            fontSize={12}
-            fontWeight="500"
-            fill="#6b7280"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-          >
-            B{node.degree}
-          </motion.text>
-        )}
-      </motion.g>
-    );
-
-    let child = node.child;
-    while (child) {
-      items.push(...renderBinomialNodes(child));
-      child = child.sibling;
-    }
-    items.push(...renderBinomialNodes(node.sibling));
-    return items;
-  };
-
   return (
     <div className="w-full bg-white/40 dark:bg-gray-900/40 backdrop-blur-sm rounded-2xl border border-white/20 dark:border-gray-700/20 shadow-xl overflow-hidden">
       <svg
@@ -230,17 +138,6 @@ export function TreeSVG({ kind, root, binomialHead, viewBox }: TreeSVGProps) {
           <linearGradient id="edgeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#60a5fa" />
             <stop offset="100%" stopColor="#a78bfa" />
-          </linearGradient>
-
-          <linearGradient
-            id="binomialEdgeGradient"
-            x1="0%"
-            y1="0%"
-            x2="100%"
-            y2="100%"
-          >
-            <stop offset="0%" stopColor="#f472b6" />
-            <stop offset="100%" stopColor="#a855f7" />
           </linearGradient>
 
           {/* Glow filters */}
@@ -259,30 +156,10 @@ export function TreeSVG({ kind, root, binomialHead, viewBox }: TreeSVGProps) {
               <feMergeNode in="SourceGraphic" />
             </feMerge>
           </filter>
-
-          <filter
-            id="glow-binomial"
-            x="-50%"
-            y="-50%"
-            width="200%"
-            height="200%"
-          >
-            <feGaussianBlur stdDeviation="4" result="coloredBlur" />
-            <feMerge>
-              <feMergeNode in="coloredBlur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
         </defs>
 
-        {kind === "Binomial"
-          ? renderBinomialEdges(binomialHead)
-          : renderEdges(root)}
-        <AnimatePresence>
-          {kind === "Binomial"
-            ? renderBinomialNodes(binomialHead)
-            : renderNodes(root)}
-        </AnimatePresence>
+        {renderEdges(root)}
+        <AnimatePresence>{renderNodes(root)}</AnimatePresence>
       </svg>
     </div>
   );

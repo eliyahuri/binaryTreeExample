@@ -27,7 +27,7 @@ export function WhatIsBinaryTree() {
     "Python",
   ];
 
-  const kinds: TreeKind[] = ["BST", "AVL", "RBT", "Binomial"];
+  const kinds: TreeKind[] = ["BST", "AVL", "RBT"];
 
   const handleCarouselChange = (index: number) => {
     setSelectedLanguage(languages[index]);
@@ -38,8 +38,6 @@ export function WhatIsBinaryTree() {
     BST: "Binary Search Tree keeps elements ordered to allow fast lookup, insertion, and deletion operations.",
     AVL: "AVL Tree is a self-balancing BST ensuring logarithmic height by performing rotations when needed.",
     RBT: "Red-Black Tree is a balanced BST using color properties to maintain efficient operations with guaranteed O(log n) complexity.",
-    Binomial:
-      "Binomial Heap is a forest of binomial trees following specific structural properties for efficient merge operations.",
   };
 
   return (
@@ -87,9 +85,7 @@ export function WhatIsBinaryTree() {
                       ? "Binary Search Tree"
                       : kind === "AVL"
                       ? "AVL Tree"
-                      : kind === "RBT"
-                      ? "Red-Black Tree"
-                      : "Binomial Heap"}
+                      : "Red-Black Tree"}
                   </option>
                 ))}
               </Select>
@@ -121,9 +117,7 @@ export function WhatIsBinaryTree() {
                 ? "Binary Search Tree"
                 : selectedKind === "AVL"
                 ? "AVL Tree"
-                : selectedKind === "RBT"
-                ? "Red-Black Tree"
-                : "Binomial Heap"}
+                : "Red-Black Tree"}
             </h3>
             <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
               {treeDescriptions[selectedKind]}

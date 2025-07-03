@@ -8,7 +8,6 @@ describe("Controls component", () => {
   const mockSetInput = vi.fn();
   const mockOnInsert = vi.fn();
   const mockOnRemove = vi.fn();
-  const mockOnExtract = vi.fn();
   const baseProps = {
     kind: "BST" as TreeKind,
     setKind: mockSetKind,
@@ -16,7 +15,6 @@ describe("Controls component", () => {
     setInput: mockSetInput,
     onInsert: mockOnInsert,
     onRemove: mockOnRemove,
-    onExtractMin: mockOnExtract,
   };
 
   it("renders controls and calls callbacks", () => {
@@ -36,12 +34,5 @@ describe("Controls component", () => {
     expect(mockOnInsert).toHaveBeenCalled();
     fireEvent.click(getByText("Delete"));
     expect(mockOnRemove).toHaveBeenCalled();
-  });
-
-  it("shows extract button for Binomial", () => {
-    const { getByText } = render(<Controls {...baseProps} kind="Binomial" />);
-    expect(getByText("Extract Min")).toBeInTheDocument();
-    fireEvent.click(getByText("Extract Min"));
-    expect(mockOnExtract).toHaveBeenCalled();
   });
 });

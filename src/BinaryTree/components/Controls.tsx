@@ -13,7 +13,6 @@ interface ControlsProps {
   setInput: (input: string) => void;
   onInsert: () => void;
   onRemove: () => void;
-  onExtractMin?: () => void;
 }
 
 /**
@@ -28,7 +27,6 @@ export default function Controls({
   setInput,
   onInsert,
   onRemove,
-  onExtractMin,
 }: ControlsProps) {
   return (
     <div className="flex flex-wrap gap-4 mb-6 items-center justify-center p-6 bg-white/60 dark:bg-gray-900/60 backdrop-blur-md rounded-2xl border border-white/20 dark:border-gray-700/20 shadow-xl">
@@ -44,7 +42,6 @@ export default function Controls({
           <option value="BST">Binary Search Tree</option>
           <option value="AVL">AVL Tree</option>
           <option value="RBT">Red-Black Tree</option>
-          <option value="Binomial">Binomial Heap</option>
         </Select>
       </div>
 
@@ -65,19 +62,9 @@ export default function Controls({
         <Button onClick={onInsert} variant="primary" size="md">
           Insert
         </Button>
-        <Button
-          onClick={onRemove}
-          variant="danger"
-          size="md"
-          disabled={kind === "Binomial"}
-        >
+        <Button onClick={onRemove} variant="danger" size="md">
           Delete
         </Button>
-        {kind === "Binomial" && onExtractMin && (
-          <Button onClick={onExtractMin} variant="success" size="md">
-            Extract Min
-          </Button>
-        )}
       </div>
     </div>
   );

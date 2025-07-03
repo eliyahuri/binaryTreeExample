@@ -230,38 +230,6 @@ public class RedBlackTree {
         t.insert(30); // Insert 30
     }
   }`,
-    Binomial: `// Binomial Tree Node
-class Node {
-    int key;
-    int degree;
-    Node parent, child, sibling;
-    Node(int key) {
-        this.key = key;
-        this.degree = 0;
-        this.parent = this.child = this.sibling = null;
-    }
-}
-
-// Binomial Heap (Forest of Binomial Trees)
-public class BinomialHeap {
-    Node head;
-    // Insert a new key
-    void insert(int key) {
-        BinomialHeap temp = new BinomialHeap();
-        temp.head = new Node(key);
-        this.head = union(this, temp);
-    }
-    // Union operation (simplified)
-    Node union(BinomialHeap h1, BinomialHeap h2) {
-        // ...merge root lists and link trees of same degree...
-        return h1.head != null ? h1.head : h2.head;
-    }
-    public static void main(String[] args) {
-        BinomialHeap heap = new BinomialHeap();
-        heap.insert(10);
-        heap.insert(20);
-    }
-  }`,
   },
   CSharp: {
     BST: `// Node class represents each node
@@ -479,38 +447,6 @@ class RedBlackTree {
         t.Insert(30); // Insert 30
     }
   }`,
-    Binomial: `// Binomial Tree Node
-class Node {
-    int key;
-    int degree;
-    Node parent, child, sibling;
-    Node(int key) {
-        this.key = key;
-        this.degree = 0;
-        this.parent = this.child = this.sibling = null;
-    }
-}
-
-// Binomial Heap (Forest of Binomial Trees)
-public class BinomialHeap {
-    Node head;
-    // Insert a new key
-    void insert(int key) {
-        BinomialHeap temp = new BinomialHeap();
-        temp.head = new Node(key);
-        this.head = union(this, temp);
-    }
-    // Union operation (simplified)
-    Node union(BinomialHeap h1, BinomialHeap h2) {
-        // ...merge root lists and link trees of same degree...
-        return h1.head != null ? h1.head : h2.head;
-    }
-    public static void main(String[] args) {
-        BinomialHeap heap = new BinomialHeap();
-        heap.insert(10);
-        heap.insert(20);
-    }
-  }`,
   },
   JavaScript: {
     BST: `// Node class for tree nodes
@@ -715,34 +651,6 @@ const rbt = new RedBlackTree(); // Create Red-Black tree
 rbt.insert(10); // Insert 10
 rbt.insert(20); // Insert 20
 rbt.insert(30); // Insert 30`,
-    Binomial: `// Binomial Tree Node
-class Node {
-    constructor(key) {
-        this.key = key;
-        this.degree = 0;
-        this.parent = this.child = this.sibling = null;
-    }
-}
-
-// Binomial Heap (Forest of Binomial Trees)
-class BinomialHeap {
-    constructor() {
-        this.head = null;
-    }
-    insert(key) {
-        const temp = new BinomialHeap();
-        temp.head = new Node(key);
-        this.head = this.union(this, temp);
-    }
-    // Union operation (simplified)
-    union(h1, h2) {
-        // ...merge root lists and link trees of same degree...
-        return h1.head || h2.head;
-    }
-}
-const heap = new BinomialHeap();
-heap.insert(10);
-heap.insert(20);`,
   },
   TypeScript: {
     BST: `// Node class for tree nodes
@@ -767,7 +675,6 @@ class BinaryTree {
 const t = new BinaryTree(new Node(1)); t.insert(2); t.insert(3); // Example usage`,
     AVL: "",
     RBT: "",
-    Binomial: "",
   },
   Python: {
     BST: `# Node class for binary search tree nodes
@@ -814,20 +721,13 @@ root = insert(root, 20)
 # Example usage
 # root = insert(root, 10)
 `,
-    Binomial: `# Binomial heap (forest of binomial trees) implementation
-# Define Node class and heap operations union, insert
-
-# Example usage
-# heap = BinomialHeap()
-# heap.insert(10)
-`,
   },
 };
 
 /**
  * Retrieves the code example template for a specified programming language and tree kind.
  * @param language - The programming language (e.g., "JavaScript", "Python").
- * @param treeKind - The type of tree (BST, AVL, RBT, Binomial).
+ * @param treeKind - The type of tree (BST, AVL, RBT).
  * @returns The code example string if available, otherwise undefined.
  */
 export function getCodeExample(

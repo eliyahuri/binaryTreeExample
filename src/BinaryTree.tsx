@@ -4,12 +4,8 @@ import Controls from "./BinaryTree/components/Controls";
 import { TreeSVG } from "./BinaryTree/components/TreeSVG";
 import {
   avlInsert,
-  binomialInsert,
-  binomialExtractMin,
-  BinomialNode,
   bstDelete,
   bstInsert,
-  layoutBinomialForest,
   layoutTree,
   NODE_R,
   rbtInsert,
@@ -24,102 +20,50 @@ import {
 export default function BinaryTree() {
   const [kind, setKind] = useState<TreeKind>("BST");
   const [root, setRoot] = useState<TreeNode | null>(null);
-  const [binomialHead, setBinomialHead] = useState<BinomialNode | null>(null);
   const [input, setInput] = useState("");
   const [viewBox, setViewBox] = useState("0 0 800 500");
 
   useEffect(() => {
-    if (kind === "Binomial") {
-      // Only layout when there's a binomial forest to display
-      if (!binomialHead) return;
-      layoutBinomialForest(binomialHead);
+    if (root) {
+      layoutTree(root);
       // Compute extents
       let minX = Infinity,
         maxX = -Infinity,
         minY = Infinity,
         maxY = -Infinity;
-      const collect = (node: BinomialNode | null) => {
-        if (!node) return;
-        if (node.x != null && node.y != null) {
-          minX = Math.min(minX, node.x);
-          maxX = Math.max(maxX, node.x);
-          minY = Math.min(minY, node.y);
-          maxY = Math.max(maxY, node.y);
-        }
-        let child = node.child;
-        while (child) {
-          collect(child);
-          child = child.sibling;
-        }
-        collect(node.sibling);
+      const visit = (n: TreeNode | null) => {
+        if (!n) return;
+        minX = Math.min(minX, n.x);
+        maxX = Math.max(maxX, n.x);
+        minY = Math.min(minY, n.y);
+        maxY = Math.max(maxY, n.y);
+        visit(n.left);
+        visit(n.right);
       };
-      collect(binomialHead);
+      visit(root);
 
-      const padding = NODE_R * 2;
-      // Shift down so tree isn't clipped at top
+      const padding = NODE_R * 1.5;
+      // Shift tree down so it's not clipped at top
       const yShift = -minY + padding;
-      const shiftTree = (node: BinomialNode | null) => {
-        if (!node) return;
-        node.y! += yShift;
-        let child = node.child;
-        while (child) {
-          shiftTree(child);
-          child = child.sibling;
-        }
-        shiftTree(node.sibling);
+      const applyYShift = (n: TreeNode | null) => {
+        if (!n) return;
+        n.y += yShift;
+        applyYShift(n.left);
+        applyYShift(n.right);
       };
-      shiftTree(binomialHead);
-      minY += yShift;
-      maxY += yShift;
+      applyYShift(root);
 
       const viewX = minX - padding;
-      const viewY = 0;
+      const viewY = 0; // already shifted y
       const viewW = maxX - minX + padding * 2;
-      const viewH = maxY - minY + padding * 2;
+      const viewH = maxY - minY + padding * 3;
+
       setViewBox(`${viewX} ${viewY} ${viewW} ${viewH}`);
-    } else {
-      if (root) {
-        layoutTree(root);
-        // Compute extents
-        let minX = Infinity,
-          maxX = -Infinity,
-          minY = Infinity,
-          maxY = -Infinity;
-        const visit = (n: TreeNode | null) => {
-          if (!n) return;
-          minX = Math.min(minX, n.x);
-          maxX = Math.max(maxX, n.x);
-          minY = Math.min(minY, n.y);
-          maxY = Math.max(maxY, n.y);
-          visit(n.left);
-          visit(n.right);
-        };
-        visit(root);
-
-        const padding = NODE_R * 1.5;
-        // Shift tree down so it's not clipped at top
-        const yShift = -minY + padding;
-        const applyYShift = (n: TreeNode | null) => {
-          if (!n) return;
-          n.y += yShift;
-          applyYShift(n.left);
-          applyYShift(n.right);
-        };
-        applyYShift(root);
-
-        const viewX = minX - padding;
-        const viewY = 0; // already shifted y
-        const viewW = maxX - minX + padding * 2;
-        const viewH = maxY - minY + padding * 3;
-
-        setViewBox(`${viewX} ${viewY} ${viewW} ${viewH}`);
-      }
     }
-  }, [root, binomialHead, kind]);
+  }, [root, kind]);
 
   useEffect(() => {
     setRoot(null);
-    setBinomialHead(null);
     setInput("");
   }, [kind]);
 
@@ -131,11 +75,6 @@ export default function BinaryTree() {
   const insert = () => {
     const val = Number(input);
     if (isNaN(val)) return;
-    if (kind === "Binomial") {
-      setBinomialHead((prev) => binomialInsert(prev, val));
-      setInput("");
-      return;
-    }
     let updated: TreeNode;
     if (kind === "AVL") updated = avlInsert(root, val);
     else if (kind === "RBT") updated = rbtInsert(root, val);
@@ -153,23 +92,9 @@ export default function BinaryTree() {
   const remove = () => {
     const val = Number(input);
     if (isNaN(val)) return;
-    if (kind === "Binomial") {
-      setInput("");
-      return;
-    }
     const updated = bstDelete(root, val);
     setRoot(updated ? { ...updated } : null);
     setInput("");
-  };
-
-  /**
-   * Extracts the minimum value from the binomial heap.
-   * Only applicable for binomial heaps.
-   */
-  const extractMin = () => {
-    if (kind !== "Binomial") return;
-    const [newHead] = binomialExtractMin(binomialHead);
-    setBinomialHead(newHead);
   };
 
   return (
@@ -184,8 +109,8 @@ export default function BinaryTree() {
           Tree Visualizer
         </h1>
         <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-          Interactive visualization of binary search trees, AVL trees, red-black
-          trees, and binomial heaps
+          Interactive visualization of binary search trees, AVL trees, and
+          red-black trees
         </p>
       </motion.div>
 
@@ -202,7 +127,6 @@ export default function BinaryTree() {
           setInput={setInput}
           onInsert={insert}
           onRemove={remove}
-          onExtractMin={extractMin}
         />
       </motion.div>
 
@@ -212,12 +136,7 @@ export default function BinaryTree() {
         transition={{ duration: 0.5, delay: 0.4 }}
         className="w-full max-w-6xl"
       >
-        <TreeSVG
-          kind={kind}
-          root={root}
-          binomialHead={binomialHead}
-          viewBox={viewBox}
-        />
+        <TreeSVG root={root} viewBox={viewBox} />
       </motion.div>
     </div>
   );
