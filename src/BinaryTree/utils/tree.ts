@@ -1,7 +1,7 @@
 /**
  * Union type representing the kinds of binary trees supported.
  */
-export type TreeKind = "BST" | "AVL" | "RBT";
+export type TreeKind = "BST" | "AVL" | "RBT" | "BH"; // Added Binomial Heap option
 
 /**
  * Enumeration of node colors for red-black trees.

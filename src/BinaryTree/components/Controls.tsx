@@ -42,6 +42,7 @@ export default function Controls({
           <option value="BST">Binary Search Tree</option>
           <option value="AVL">AVL Tree</option>
           <option value="RBT">Red-Black Tree</option>
+          <option value="BH">Binomial Heap</option>
         </Select>
       </div>
 
@@ -62,9 +63,15 @@ export default function Controls({
         <Button onClick={onInsert} variant="primary" size="md">
           Insert
         </Button>
-        <Button onClick={onRemove} variant="danger" size="md">
-          Delete
-        </Button>
+        {kind === "BH" ? (
+          <Button onClick={onRemove} variant="danger" size="md">
+            Extract Min
+          </Button>
+        ) : (
+          <Button onClick={onRemove} variant="danger" size="md">
+            Delete
+          </Button>
+        )}
       </div>
     </div>
   );

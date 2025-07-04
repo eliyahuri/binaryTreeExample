@@ -34,10 +34,11 @@ export function WhatIsBinaryTree() {
     setCopied(false);
   };
 
-  const treeDescriptions = {
+  const treeDescriptions: Record<TreeKind, string> = {
     BST: "Binary Search Tree keeps elements ordered to allow fast lookup, insertion, and deletion operations.",
     AVL: "AVL Tree is a self-balancing BST ensuring logarithmic height by performing rotations when needed.",
     RBT: "Red-Black Tree is a balanced BST using color properties to maintain efficient operations with guaranteed O(log n) complexity.",
+    BH: "Binomial Heap is a collection of binomial trees that supports efficient merging of heaps.",
   };
 
   return (

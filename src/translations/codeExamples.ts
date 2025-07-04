@@ -230,6 +230,32 @@ public class RedBlackTree {
         t.insert(30); // Insert 30
     }
   }`,
+    BH: `// Binomial Heap implementation (simplified)
+import java.util.ArrayList;
+import java.util.List;
+
+class BHNode {
+    int key;
+    int order;
+    List<BHNode> children = new ArrayList<>();
+    BHNode(int key) { this.key = key; }
+}
+
+public class BinomialHeap {
+    private List<BHNode> roots = new ArrayList<>();
+
+    // This is a simplified insert for demonstration.
+    // A full implementation requires merging heaps.
+    public void insert(int key) {
+        roots.add(new BHNode(key));
+    }
+
+    public static void main(String[] args) {
+        BinomialHeap heap = new BinomialHeap();
+        heap.insert(10);
+        heap.insert(5);
+    }
+}`,
   },
   CSharp: {
     BST: `// Node class represents each node
@@ -447,6 +473,32 @@ class RedBlackTree {
         t.Insert(30); // Insert 30
     }
   }`,
+    BH: `// Binomial Heap implementation (simplified)
+import java.util.ArrayList;
+import java.util.List;
+
+class BHNode {
+    int key;
+    int order;
+    List<BHNode> children = new ArrayList<>();
+    BHNode(int key) { this.key = key; }
+}
+
+public class BinomialHeap {
+    private List<BHNode> roots = new ArrayList<>();
+
+    // This is a simplified insert for demonstration.
+    // A full implementation requires merging heaps.
+    public void insert(int key) {
+        roots.add(new BHNode(key));
+    }
+
+    public static void main(String[] args) {
+        BinomialHeap heap = new BinomialHeap();
+        heap.insert(10);
+        heap.insert(5);
+    }
+}`,
   },
   JavaScript: {
     BST: `// Node class for tree nodes
@@ -651,6 +703,31 @@ const rbt = new RedBlackTree(); // Create Red-Black tree
 rbt.insert(10); // Insert 10
 rbt.insert(20); // Insert 20
 rbt.insert(30); // Insert 30`,
+    BH: `// Binomial Heap implementation (simplified)
+class BHNode {
+    constructor(key) {
+        this.key = key;
+        this.order = 0;
+        this.children = [];
+    }
+}
+
+// This is a simplified insert for demonstration.
+class BinomialHeap {
+    constructor() {
+        this.roots = []; // List of root nodes
+    }
+    insert(key) {
+        const newNode = new BHNode(key);
+        // Simplified: just add to the list of roots
+        this.roots.push(newNode);
+    }
+}
+
+// Example
+const heap = new BinomialHeap();
+heap.insert(10);
+heap.insert(5);`,
   },
   TypeScript: {
     BST: `// Node class for tree nodes
@@ -675,6 +752,55 @@ class BinaryTree {
 const t = new BinaryTree(new Node(1)); t.insert(2); t.insert(3); // Example usage`,
     AVL: "",
     RBT: "",
+    BH: `class BHNode {
+    constructor(
+        public key: number,
+        public order = 0,
+        public children: BHNode[] = []
+    ) {}
+}
+
+class BinomialHeap {
+    public roots: BHNode[] = [];
+
+    private link(t1: BHNode, t2: BHNode): BHNode {
+        if (t1.key > t2.key) [t1, t2] = [t2, t1];
+        t2.parent = t1;
+        t1.children.push(t2);
+        t1.order++;
+        return t1;
+    }
+
+    private merge(h1: BHNode[], h2: BHNode[]): BHNode[] {
+        const res: BHNode[] = [];
+        let i = 0, j = 0;
+        while (i < h1.length || j < h2.length) {
+            if (j >= h2.length || (i < h1.length && h1[i].order < h2[j].order)) {
+                res.push(h1[i++]);
+            } else {
+                res.push(h2[j++]);
+            }
+        }
+        return res;
+    }
+    
+    insert(key: number) {
+        let tempHeap = new BinomialHeap();
+        tempHeap.roots.push(new BHNode(key));
+        this.roots = this.merge(this.roots, tempHeap.roots);
+        
+        if (this.roots.length < 2) return;
+
+        let newRoots: BHNode[] = [];
+        let carry: BHNode | null = null;
+        
+        // Simplified union logic
+    }
+}
+
+const bh = new BinomialHeap();
+bh.insert(10);
+bh.insert(5);`,
   },
   Python: {
     BST: `# Node class for binary search tree nodes
@@ -721,6 +847,24 @@ root = insert(root, 20)
 # Example usage
 # root = insert(root, 10)
 `,
+    BH: `# Binomial Heap implementation (simplified)
+class Node:
+    def __init__(self, key):
+        self.key = key
+        self.order = 0
+        self.children = []
+
+# This is a simplified insert for demonstration.
+# A full implementation requires merging heaps.
+heap = [] # List of root nodes
+def insert(key):
+    new_node = Node(key)
+    # Simplified: just add to the list of roots
+    heap.append(new_node)
+
+# Example
+insert(10)
+insert(5)`,
   },
 };
 

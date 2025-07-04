@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 import Controls from "./BinaryTree/components/Controls";
 import { TreeSVG } from "./BinaryTree/components/TreeSVG";
 import {
@@ -12,6 +12,14 @@ import {
   TreeKind,
   TreeNode,
 } from "./BinaryTree/utils/tree";
+import {
+  bhCreate,
+  bhExtractMin,
+  bhInsert,
+  BinomialHeap,
+  // bhFindMin, (unused)
+  layoutBH,
+} from "./components/BinomialHeap/utils/binomialHeap";
 
 /**
  * BinaryTree component renders the interactive tree visualizer UI.
@@ -22,9 +30,10 @@ export default function BinaryTree() {
   const [root, setRoot] = useState<TreeNode | null>(null);
   const [input, setInput] = useState("");
   const [viewBox, setViewBox] = useState("0 0 800 500");
+  const [bh, setBh] = useState<BinomialHeap>(bhCreate());
 
   useEffect(() => {
-    if (root) {
+    if (kind !== "BH" && root) {
       layoutTree(root);
       // Compute extents
       let minX = Infinity,
@@ -60,6 +69,36 @@ export default function BinaryTree() {
 
       setViewBox(`${viewX} ${viewY} ${viewW} ${viewH}`);
     }
+    if (kind === "BH") {
+      layoutBH(bh);
+      // compute extents
+      let minX = Infinity,
+        maxX = -Infinity,
+        minY = Infinity,
+        maxY = -Infinity;
+      const visit = (n: any) => {
+        if (!n) return;
+        minX = Math.min(minX, n.x);
+        maxX = Math.max(maxX, n.x);
+        minY = Math.min(minY, n.y);
+        maxY = Math.max(maxY, n.y);
+        n.children.forEach((c: any) => visit(c));
+      };
+      bh.roots.forEach((r) => visit(r));
+      const padding = NODE_R * 1.5;
+      const yShift = -minY + padding;
+      const applyY = (n: any) => {
+        if (!n) return;
+        n.y += yShift;
+        n.children.forEach((c: any) => applyY(c));
+      };
+      bh.roots.forEach((r) => applyY(r));
+      const viewX = minX - padding;
+      const viewY = 0;
+      const viewW = maxX - minX + padding * 2;
+      const viewH = maxY - minY + padding * 3;
+      setViewBox(`${viewX} ${viewY} ${viewW} ${viewH}`);
+    }
   }, [root, kind]);
 
   useEffect(() => {
@@ -75,6 +114,12 @@ export default function BinaryTree() {
   const insert = () => {
     const val = Number(input);
     if (isNaN(val)) return;
+    if (kind === "BH") {
+      // Insert into Binomial Heap
+      setBh(bhInsert(bh, val));
+      setInput("");
+      return;
+    }
     let updated: TreeNode;
     if (kind === "AVL") updated = avlInsert(root, val);
     else if (kind === "RBT") updated = rbtInsert(root, val);
@@ -92,6 +137,12 @@ export default function BinaryTree() {
   const remove = () => {
     const val = Number(input);
     if (isNaN(val)) return;
+    if (kind === "BH") {
+      // Extract min from Binomial Heap
+      setBh(bhExtractMin(bh));
+      setInput("");
+      return;
+    }
     const updated = bstDelete(root, val);
     setRoot(updated ? { ...updated } : null);
     setInput("");
