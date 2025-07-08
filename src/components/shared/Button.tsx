@@ -4,7 +4,7 @@ import { ReactNode } from "react";
 interface ButtonProps {
   children: ReactNode;
   onClick?: () => void;
-  variant?: "primary" | "secondary" | "danger" | "success";
+  variant?: "primary" | "secondary" | "danger" | "success" | "ghost";
   size?: "sm" | "md" | "lg";
   disabled?: boolean;
   className?: string;
@@ -19,6 +19,8 @@ const variantStyles = {
     "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-lg shadow-red-500/25",
   success:
     "bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg shadow-green-500/25",
+  ghost:
+    "bg-transparent hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-200",
 };
 
 const sizeStyles = {

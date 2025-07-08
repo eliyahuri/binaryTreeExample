@@ -12,7 +12,9 @@ interface ControlsProps {
   input: string;
   setInput: (input: string) => void;
   onInsert: () => void;
-  onRemove: () => void;
+  onDelete: () => void;
+  onRandom: () => void;
+  onClear: () => void;
 }
 
 /**
@@ -26,7 +28,9 @@ export default function Controls({
   input,
   setInput,
   onInsert,
-  onRemove,
+  onDelete,
+  onRandom,
+  onClear,
 }: ControlsProps) {
   return (
     <div className="flex flex-wrap gap-4 mb-6 items-center justify-center p-6 bg-white/60 dark:bg-gray-900/60 backdrop-blur-md rounded-2xl border border-white/20 dark:border-gray-700/20 shadow-xl">
@@ -42,7 +46,6 @@ export default function Controls({
           <option value="BST">Binary Search Tree</option>
           <option value="AVL">AVL Tree</option>
           <option value="RBT">Red-Black Tree</option>
-          <option value="BH">Binomial Heap</option>
         </Select>
       </div>
 
@@ -63,15 +66,15 @@ export default function Controls({
         <Button onClick={onInsert} variant="primary" size="md">
           Insert
         </Button>
-        {kind === "BH" ? (
-          <Button onClick={onRemove} variant="danger" size="md">
-            Extract Min
-          </Button>
-        ) : (
-          <Button onClick={onRemove} variant="danger" size="md">
-            Delete
-          </Button>
-        )}
+        <Button onClick={onDelete} variant="danger" size="md">
+          Delete
+        </Button>
+        <Button onClick={onRandom} variant="secondary" size="md">
+          Random
+        </Button>
+        <Button onClick={onClear} variant="ghost" size="md">
+          Clear
+        </Button>
       </div>
     </div>
   );
